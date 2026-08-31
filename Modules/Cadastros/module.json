@@ -1,0 +1,11 @@
+{
+    "name": "Cadastros",
+    "alias": "cadastros",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Cadastros\\Providers\\CadastrosServiceProvider"
+    ],
+    "files": []
+}

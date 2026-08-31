@@ -1,0 +1,23 @@
+{
+    "name": "nwidart/cadastros",
+    "description": "Modulo de Gestao de Pessoas e Parceiros (Funcionarios, Clientes e Fornecedores)",
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Cadastros\\": "app/",
+            "Modules\\Cadastros\\App\\": "app/",
+            "Modules\\Cadastros\\Database\\Factories\\": "database/factories/",
+            "Modules\\Cadastros\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Cadastros\\Tests\\": "tests/"
+        }
+    }
+}

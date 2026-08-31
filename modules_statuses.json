@@ -1,0 +1,9 @@
+{
+    "Core": true,
+    "Estoque": true,
+    "Vendas": true,
+    "Cadastros": true,
+    "Orcamento": true,
+    "SuperAdmin": true,
+    "Fiscal": true
+}

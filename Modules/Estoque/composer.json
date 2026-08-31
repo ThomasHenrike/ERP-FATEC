@@ -1,0 +1,23 @@
+{
+    "name": "nwidart/estoque",
+    "description": "",
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Estoque\\": "app/",
+            "Modules\\Estoque\\App\\": "app/",
+            "Modules\\Estoque\\Database\\Factories\\": "database/factories/",
+            "Modules\\Estoque\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Estoque\\Tests\\": "tests/"
+        }
+    }
+}

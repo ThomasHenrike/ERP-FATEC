@@ -1,0 +1,23 @@
+{
+    "name": "nwidart/vendas",
+    "description": "",
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Vendas\\": "app/",
+            "Modules\\Vendas\\App\\": "app/",
+            "Modules\\Vendas\\Database\\Factories\\": "database/factories/",
+            "Modules\\Vendas\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Vendas\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/orcamento",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+    "psr-4": {
+        "Modules\\Orcamento\\": "app/",
+        "Modules\\Orcamento\\App\\": "app/",
+        "Modules\\Orcamento\\Database\\Factories\\": "database/factories/",
+        "Modules\\Orcamento\\Database\\Seeders\\": "database/seeders/"
+    }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Orcamento\\Tests\\": "tests/"
+        }
+    }
+}

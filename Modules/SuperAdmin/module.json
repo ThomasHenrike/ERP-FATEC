@@ -1,0 +1,11 @@
+{
+    "name": "SuperAdmin",
+    "alias": "superadmin",
+    "description": "Painel administrativo da plataforma: empresas, modulos e faturamento",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\SuperAdmin\\Providers\\SuperAdminServiceProvider"
+    ],
+    "files": []
+}

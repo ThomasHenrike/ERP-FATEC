@@ -1,0 +1,11 @@
+{
+    "name": "Fiscal",
+    "alias": "fiscal",
+    "description": "Emissao de NF-e/NFC-e junto a SEFAZ",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Fiscal\\Providers\\FiscalServiceProvider"
+    ],
+    "files": []
+}
