@@ -73,5 +73,5 @@ código dos dois módulos continua no repositório.
 - Thomas Henrique Batista Quaresma
 - Thiago Felipe Godoy Ribeiro
 - Matheus Felipe Rodrigues de Avelar
-- Matheus Henrique Silvestre
 - Leonardo Vilela da Silva
+- Pedro Mangutchi
