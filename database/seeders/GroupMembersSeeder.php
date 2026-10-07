@@ -18,7 +18,7 @@ class GroupMembersSeeder extends Seeder
     private const MEMBROS = [
         ['empresa' => 'Empresa Teste - Thiago', 'nome' => 'Thiago', 'email' => 'thiago@teste.erp', 'senha' => 'thiago123', 'documento' => '11111111000101'],
         ['empresa' => 'Empresa Teste - Matheus Felipe', 'nome' => 'Matheus', 'email' => 'matheusfelipe@teste.erp', 'senha' => 'matheus123', 'documento' => '22222222000102'],
-        ['empresa' => 'Empresa Teste - Matheus Henrique', 'nome' => 'Matheus', 'email' => 'matheushenrique@teste.erp', 'senha' => 'matheus123', 'documento' => '33333333000103'],
+        ['empresa' => 'Empresa Teste - Pedro', 'nome' => 'Pedro', 'email' => 'pedro@teste.erp', 'senha' => 'pedro123', 'documento' => '33333333000103'],
         ['empresa' => 'Empresa Teste - Leonardo', 'nome' => 'Leonardo', 'email' => 'leonardo@teste.erp', 'senha' => 'leonardo123', 'documento' => '44444444000104'],
     ];
 
