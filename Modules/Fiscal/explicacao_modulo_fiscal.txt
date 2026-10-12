@@ -1,0 +1,48 @@
+Módulo Fiscal
+
+O módulo Fiscal é responsável por todas as regras e processos ligados à legislação tributária, documentos fiscais e obrigações contábeis do sistema.
+
+Objetivo do módulo:
+- controlar emissões e documentos fiscais;
+- garantir conformidade com normas tributárias;
+- organizar informações financeiras e fiscais do ERP;
+- apoiar a emissão de notas, impostos e registros obrigatórios.
+
+Em geral, esse módulo pode conter:
+- notas fiscais;
+- regras de impostos;
+- CFOP, NCM e tributação;
+- documentos de entrada e saída;
+- relatórios fiscais;
+- integrações com sistemas externos ou autoridades.
+
+Estrutura típica do módulo:
+
+Modules/Fiscal/
+  ├── app/
+  │   ├── Models/
+  │   ├── Http/
+  │   └── Providers/
+  ├── database/
+  │   ├── migrations/
+  │   └── seeders
+  ├── resources/
+  │   ├── views/
+  │   └── js/
+  ├── routes/
+  ├── tests/
+  ├── composer.json
+  ├── module.json
+  └── package.json
+
+Função principal:
+O módulo Fiscal centraliza o processo de emissão, organização e controle dos dados tributários, garantindo que a empresa cumpra as obrigações fiscais corretamente.
+
+Importância:
+- reduz riscos de inconsistência tributária;
+- melhora a conformidade legal;
+- facilita a geração de documentos fiscais;
+- mantém registros organizados para auditoria e controle.
+
+Em resumo:
+O módulo Fiscal é responsável pela gestão das obrigações e documentos legais do sistema, assegurando que as operações da empresa estejam alinhadas com as regras fiscais vigentes.
