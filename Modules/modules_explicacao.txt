@@ -1,0 +1,52 @@
+Estrutura da pasta Modules
+
+A pasta Modules é o coração da arquitetura modular do projeto ERP. Ela organiza o sistema em módulos independentes, cada um responsável por uma área de negócio ou funcionalidade.
+
+Objetivo:
+- separar features em módulos distintos;
+- facilitar manutenção e escalabilidade;
+- permitir que cada área do sistema tenha seus próprios arquivos, rotas, controllers, views, testes e configurações;
+- reduzir acoplamento entre partes diferentes do ERP.
+
+Estrutura geral:
+
+Modules/
+  ├── Cadastro/
+  ├── Core/
+  ├── Estoque/
+  ├── Fiscal/
+  ├── Orcamento/
+  ├── SuperAdmin/
+  └── Vendas/
+
+Cada módulo normalmente contém:
+
+- composer.json: configuração do módulo como pacote PHP.
+- module.json: definição do módulo no sistema de módulos.
+- package.json: dependências e scripts front-end do módulo.
+- vite.config.js: configuração do Vite para assets do módulo.
+- app/: lógica de aplicação do módulo.
+- config/: configurações específicas do módulo.
+- database/: migrations, seeders e outros arquivos relacionados ao banco.
+- resources/: arquivos front-end, views e assets do módulo.
+- routes/: rotas web, API ou console do módulo.
+- tests/: testes automatizados do módulo.
+
+Exemplo prático:
+
+- Modules/Estoque: módulo responsável pelo controle de estoque.
+  - pode ter produtos, categorias, movimentações, entradas e saídas.
+- Modules/Vendas: módulo responsável pelas vendas e pedidos.
+- Modules/Orcamento: módulo de orçamentos e propostas.
+- Modules/Fiscal: regras e integração fiscal.
+- Modules/Core: funcionalidades centrais compartilhadas pelo sistema.
+- Modules/SuperAdmin: gerenciamento administrativo e configurações globais.
+
+Vantagens dessa organização:
+- cada módulo pode evoluir independentemente;
+- equipes podem trabalhar em áreas diferentes sem mexer em tudo;
+- manutenção fica mais simples;
+- reutilização de código e padronização melhoram com o tempo.
+
+Em resumo:
+A pasta Modules organiza o ERP em partes menores e especializadas, permitindo que o sistema seja desenvolvido como conjunto de módulos complementares, em vez de um único bloco gigante.
