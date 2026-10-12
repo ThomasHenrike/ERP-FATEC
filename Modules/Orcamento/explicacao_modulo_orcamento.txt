@@ -1,0 +1,50 @@
+Módulo Orçamento
+
+O módulo Orçamento é responsável por planejar, registrar e acompanhar propostas, orçamentos e valores estimados de serviços ou produtos.
+
+Objetivo do módulo:
+- criar orçamentos para clientes ou projetos;
+- controlar valores estimados e condições comerciais;
+- converter propostas em vendas ou pedidos;
+- organizar o planejamento financeiro e operacional.
+
+Em geral, esse módulo pode conter:
+- orçamentos;
+- itens do orçamento;
+- condições de pagamento;
+- validações de preços;
+- status do orçamento;
+- histórico de alterações e aprovações.
+
+Estrutura típica do módulo:
+
+Modules/Orcamento/
+  ├── app/
+  │   ├── Models/
+  │   ├── Http/
+  │   └── Providers/
+  ├── config/
+  ├── database/
+  │   ├── migrations/
+  │   └── seeders
+  ├── resources/
+  │   ├── views/
+  │   └── js/
+  ├── routes/
+  ├── tests/
+  ├── composer.json
+  ├── module.json
+  ├── package.json
+  └── vite.config.js
+
+Função principal:
+O módulo Orçamento organiza a etapa de negociação e estimação de valores, permitindo que a empresa prepare propostas para clientes antes da venda final.
+
+Importância:
+- facilita a negociação;
+- melhora o controle de propostas;
+- ajuda no planejamento financeiro;
+- acelera a conversão de orçamento em venda.
+
+Em resumo:
+O módulo Orçamento é responsável por gerenciar os cálculos, propostas e condições comerciais antes da concretização da venda ou da prestação do serviço.
