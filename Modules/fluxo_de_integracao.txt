@@ -1,0 +1,237 @@
+FLUXO DE INTEGRAÇÃO DE DADOS ENTRE OS MÓDULOS DO ERP-FATEC
+
+1. INTRODUÇÃO
+O ERP-FATEC está organizado em módulos que representam áreas de responsabilidade distintas do sistema. Essa organização permite separar funcionalidades administrativas, cadastrais e operacionais, favorecendo a manutenção e a evolução do software.
+A integração de dados consiste na comunicação e no compartilhamento controlado de informações entre esses módulos durante a execução dos processos de negócio. Para que essa integração seja consistente, cada informação deve possuir uma origem de referência identificável, e os demais módulos devem reutilizá-la por meio de relacionamentos e identificadores, evitando a criação de cadastros redundantes.
+Este documento apresenta uma visão integrada dos módulos Core, SuperAdmin, Cadastros, Estoque, Orçamento, Vendas e Fiscal. Seu propósito é explicar as responsabilidades de cada componente no contexto do fluxo de informações, complementando os documentos individuais existentes em cada diretório de módulo.
+
+Nota de escopo: a descrição a seguir foi elaborada a partir dos arquivos de explicação dos módulos. Esses arquivos apresentam finalidades e estruturas típicas; portanto, os fluxos entre módulos descritos neste documento devem ser entendidos como uma visão conceitual de integração. A confirmação do comportamento efetivamente implementado exige a verificação de models, controllers, services, rotas, migrations, regras de autorização e testes do projeto.
+
+2. OBJETIVO
+
+O objetivo deste documento é:
+- descrever a função de cada módulo no ciclo de utilização dos dados;
+- demonstrar como informações cadastrais podem ser reutilizadas em operações de estoque, orçamento, vendas e processos fiscais;
+- estabelecer princípios para reduzir duplicidade e inconsistência de registros;
+- indicar pontos em que as responsabilidades precisam ser confirmadas no código e no modelo de dados;
+- fornecer uma referência para compreender o fluxo de informações no ERP-FATEC.
+
+3. VISÃO GERAL DOS MÓDULOS
+
+3.1. Módulo Core
+O Core constitui a camada de recursos compartilhados do ERP. Sua finalidade é oferecer funcionalidades comuns aos demais módulos, como mecanismos de autenticação e autorização, usuários, permissões, configurações gerais, utilitários e serviços reutilizáveis.
+No fluxo de integração, o Core representa uma base transversal: os módulos de negócio podem depender de seus recursos para aplicar regras comuns e manter comportamentos padronizados. Por exemplo, antes de permitir uma operação, o sistema deve verificar a identidade do usuário e as permissões aplicáveis ao contexto da ação.
+
+Responsabilidade no fluxo de dados:
+- oferecer recursos técnicos compartilhados;
+- apoiar a autenticação e a autorização, conforme a implementação;
+- reduzir a repetição de lógica comum entre módulos;
+- favorecer padrões consistentes de funcionamento.
+
+O Core não deve ser interpretado automaticamente como proprietário de todos os dados utilizados pelos outros módulos. Sua responsabilidade principal, conforme a documentação disponível, é fornecer recursos centrais e reutilizáveis.
+
+3.2. Módulo SuperAdmin
+O SuperAdmin corresponde à área de administração central do ERP, com atribuições relacionadas à gestão global do ambiente, às configurações administrativas, aos usuários, às permissões e à manutenção do sistema.
+No fluxo de integração, esse módulo representa a perspectiva de administração global. Suas funcionalidades podem ser utilizadas para administrar o ambiente e os parâmetros gerais que afetam a utilização do ERP. A divisão exata entre as operações administrativas do SuperAdmin e os serviços compartilhados do Core deve seguir a implementação efetiva do projeto.
+
+Responsabilidade no fluxo de dados:
+- apoiar a administração global do sistema;
+- disponibilizar operações administrativas autorizadas;
+- gerenciar configurações e parâmetros de alcance global, quando implementados;
+- contribuir para a governança e o controle de acesso.
+
+Ponto de atenção: as descrições de Core e SuperAdmin mencionam usuários e permissões. Para evitar duplicação funcional ou de dados, o código deve deixar claro quais operações pertencem à interface administrativa do SuperAdmin e quais serviços, modelos ou regras são compartilhados pelo Core. Essa distinção não pode ser determinada apenas pelos arquivos explicativos.
+
+3.3. Módulo Cadastros
+O módulo Cadastros mantém as informações cadastrais fundamentais do negócio. A documentação o apresenta como base para informações de entidades e referências utilizadas por áreas como Estoque, Vendas, Fiscal e Orçamento. Entre os exemplos de cadastros estão clientes, fornecedores, produtos ou itens básicos, categorias, empresas, filiais e outros dados gerais.
+No fluxo de integração, esse módulo fornece informações de referência para as operações dos demais módulos. Em vez de criar uma nova cópia de um cliente, fornecedor ou produto a cada operação, os módulos consumidores devem referenciar o registro cadastral existente, quando essa for a organização adotada pelo sistema.
+
+Responsabilidade no fluxo de dados:
+- manter informações cadastrais de referência;
+- apoiar a padronização dos dados reutilizados;
+- disponibilizar referências para processos comerciais, de estoque, orçamentários e fiscais;
+- contribuir para reduzir a duplicação de cadastros.
+
+A lista definitiva de entidades sob responsabilidade de Cadastros deve ser confirmada no código e no DER, pois as descrições dos módulos Estoque e Vendas também mencionam produtos, categorias ou clientes como possíveis componentes.
+
+3.4. Módulo Estoque
+O módulo Estoque é responsável pelo controle dos itens físicos ou materiais, incluindo o acompanhamento de entradas, saídas, movimentações, disponibilidade e inventário. Ele fornece informações operacionais sobre a quantidade e a movimentação dos itens ao longo das atividades da empresa.
+No fluxo integrado, o estoque pode consumir os dados cadastrais de produtos e categorias e manter os dados próprios da operação de inventário, tais como quantidades disponíveis, locais de armazenamento e movimentações, de acordo com o escopo implementado.
+
+Responsabilidade no fluxo de dados:
+- controlar disponibilidade e movimentação dos itens;
+- registrar entradas e saídas de estoque;
+- manter informações relacionadas ao inventário;
+- fornecer dados de disponibilidade para processos que dependam de produtos.
+
+Para evitar duplicação, é importante distinguir os dados de identificação do produto dos dados operacionais de estoque. Uma possível separação conceitual é manter o cadastro mestre do produto em uma única fonte e registrar no Estoque as quantidades e movimentações associadas a esse produto. A fonte oficial deve ser confirmada pela estrutura real das tabelas e pelos relacionamentos existentes.
+
+3.5. Módulo Orçamento
+O módulo Orçamento é destinado à elaboração e ao acompanhamento de propostas comerciais e valores estimados para produtos ou serviços. A documentação indica atividades como criação de orçamentos, definição de condições comerciais, acompanhamento de status e eventual conversão de uma proposta em venda ou pedido.
+No fluxo integrado, o orçamento pode utilizar referências já existentes de clientes e produtos, registrando os itens, as quantidades, os valores e as condições pertinentes à proposta. Caso o orçamento seja convertido em venda, a operação deve preservar a relação entre os registros, evitando recadastrar os mesmos dados cadastrais ou recriar itens sem necessidade.
+
+Responsabilidade no fluxo de dados:
+- registrar propostas e valores estimados;
+- associar itens e condições comerciais ao orçamento;
+- manter o estado e o histórico da proposta, caso implementados;
+- fornecer dados para um eventual processo de conversão em venda.
+
+A conversão direta de orçamento em venda é descrita como uma possibilidade funcional do módulo, mas sua disponibilidade e sua implementação concreta devem ser verificadas antes de serem consideradas parte do fluxo ativo do sistema.
+
+3.6. Módulo Vendas
+O módulo Vendas administra o processo comercial, incluindo pedidos, vendas, itens, condições de pagamento, status e acompanhamento das operações comerciais. Ele relaciona informações de clientes e produtos às transações realizadas pela empresa.
+No fluxo de integração, Vendas utiliza os dados necessários à operação comercial e registra a transação. Os produtos e clientes devem ser referenciados a partir de suas fontes cadastrais oficiais, conforme a modelagem do sistema. Quando a operação comercial afeta o inventário, a movimentação correspondente deve ocorrer por meio do fluxo responsável pelo estoque, desde que essa integração esteja implementada.
+
+Responsabilidade no fluxo de dados:
+- registrar e acompanhar pedidos e vendas;
+- relacionar clientes, produtos e itens vendidos;
+- manter informações sobre o estado das operações comerciais;
+- disponibilizar os dados da transação para processos posteriores autorizados, como os fiscais.
+
+A documentação individual descreve as responsabilidades gerais de Vendas, mas não especifica todas as dependências de execução, transações de banco ou chamadas internas. Por isso, a sincronização com Estoque, Orçamento e Fiscal deve ser confirmada no código-fonte.
+
+3.7. Módulo Fiscal
+O módulo Fiscal trata das regras e dos processos associados à documentação fiscal e à tributação. A documentação menciona documentos fiscais, regras de impostos, CFOP, NCM, tributação, registros de entrada e saída e relatórios fiscais como possíveis componentes do módulo.
+No fluxo integrado, os dados de uma operação comercial ou de movimentação podem constituir informações de entrada para procedimentos fiscais. Para que isso ocorra de forma consistente, os dados relevantes devem ser obtidos a partir dos registros de origem e associados à operação correspondente, sem manter cópias independentes e divergentes de informações cadastrais.
+
+Responsabilidade no fluxo de dados:
+- organizar informações fiscais e tributárias;
+- apoiar a emissão e o controle de documentos fiscais, quando implementados;
+- utilizar informações relacionadas às operações empresariais;
+- favorecer a rastreabilidade das informações utilizadas nos processos fiscais.
+
+A integração com serviços externos, a emissão efetiva de documentos e a comunicação automática com Vendas ou Estoque não devem ser presumidas apenas pela descrição geral do módulo. Esses pontos exigem confirmação no código e nos testes.
+
+4. FLUXO CONCEITUAL DE INTEGRAÇÃO DOS DADOS
+O fluxo abaixo apresenta uma visão conceitual das dependências entre os módulos, com base nas responsabilidades descritas nos documentos individuais.
+
+4.1. Acesso e contexto administrativo
+
+4.1.1. O usuário acessa o ERP por meio do mecanismo de entrada disponibilizado pelo sistema.
+4.1.2. Os recursos compartilhados do Core apoiam a autenticação, a autorização e as regras comuns, conforme a implementação.
+4.1.3. As funções do SuperAdmin são utilizadas por usuários devidamente autorizados para administrar configurações e aspectos globais do ambiente.
+4.1.4. Uma vez autorizado o acesso, o usuário interage com os módulos disponíveis no seu contexto.
+
+4.2. Disponibilização dos dados cadastrais
+
+4.2.1. Os dados gerais de clientes, fornecedores, produtos, categorias e outras entidades são mantidos na fonte cadastral responsável, conforme a divisão efetiva do sistema.
+4.2.2. Os módulos consumidores consultam ou referenciam esses registros para executar suas operações.
+4.2.3. A utilização de identificadores e relacionamentos existentes reduz a necessidade de cadastrar novamente entidades já registradas.
+4.2.4. Alterações em um dado cadastral devem refletir-se nas consultas realizadas pelos módulos que utilizam a mesma fonte, respeitando as regras de integridade do sistema.
+
+4.3. Controle de estoque
+
+4.3.1. O módulo Estoque utiliza as referências necessárias para identificar os itens controlados.
+4.3.2. As entradas, saídas e demais movimentações são registradas no contexto do inventário.
+4.3.3. Os processos que dependem de disponibilidade podem consultar as informações de estoque.
+4.3.4. Operações comerciais que alterem quantidades devem utilizar o mecanismo de movimentação estabelecido pelo sistema, evitando alterações independentes e inconsistentes nos saldos.
+
+4.4. Elaboração de orçamento
+
+4.4.1. O usuário prepara uma proposta no módulo Orçamento.
+4.4.2. A proposta referencia os dados cadastrais de cliente e produto necessários, além de registrar os valores e as condições pertinentes.
+4.4.3. A proposta é mantida com seu estado e histórico, quando essas funcionalidades estiverem implementadas.
+4.4.4. Se houver conversão para venda, os registros de origem e destino devem manter uma relação rastreável, evitando a criação de cadastros duplicados.
+
+4.5. Registro da venda
+
+4.5.1. O módulo Vendas reúne as referências cadastrais e os dados comerciais necessários à operação.
+4.5.2. A venda e seus itens são registrados de acordo com as regras de negócio aplicáveis.
+4.5.3. Quando a operação implica saída de mercadoria, a atualização do estoque deve ocorrer pelo fluxo definido para as movimentações, caso essa integração exista no sistema.
+4.5.4. Os dados da venda podem ser disponibilizados a outros processos que dependam dessa transação, respeitando permissões e relacionamentos.
+
+4.6. Processamento fiscal
+
+4.6.1. Os dados da operação que exijam tratamento fiscal são encaminhados ou consultados pelo módulo Fiscal, conforme a integração implementada.
+4.6.2. As regras tributárias e os dados necessários são aplicados de acordo com o processo fiscal correspondente.
+4.6.3. Os documentos e registros produzidos devem manter referência à operação que lhes deu origem, quando essa relação fizer parte do modelo.
+4.6.4. Erros ou pendências fiscais devem ser tratados de acordo com os estados e mecanismos efetivamente previstos no sistema.
+
+5. REPRESENTAÇÃO RESUMIDA DO FLUXO
+
+                    +----------------------+
+                    |  Core                |
+                    |  Recursos comuns     |
+                    +----------+-----------+
+                               |
+                               v
+                    +----------------------+
+                    |  Acesso aos módulos  |
+                    +----------------------+
+                               ^
+                               |
+                    +----------+-----------+
+                    |  SuperAdmin          |
+                    |  Administração geral |
+                    +----------------------+
+
+                    +----------------------+
+                    |  Cadastros           |
+                    |  Dados de referência |
+                    +----+-----------+-----+
+                         |           |
+              +----------+           +------------------+
+              v                                         v
+    +----------------------+                 +----------------------+
+    |  Estoque             |                 |  Orçamento           |
+    |  Inventário e saldo  |                 |  Propostas comerciais|
+    +----------+-----------+                 +----------+-----------+
+               |                                        |
+               |                                        | conversão,
+               |                                        | se disponível
+               +-------------------+--------------------+
+                                   v
+                         +----------------------+
+                         |  Vendas              |
+                         |  Operações comerciais|
+                         +----------+-----------+
+                                    |
+                                    v
+                         +----------------------+
+                         |  Fiscal               |
+                         |  Dados e processos    |
+                         |  tributários          |
+                         +----------------------+
+
+
+6. PRINCÍPIOS PARA EVITAR DUPLICAÇÃO E INCONSISTÊNCIA
+
+6.1. Fonte oficial por entidade
+Cada entidade compartilhada deve possuir uma fonte oficial claramente definida. Antes de criar uma tabela ou cadastro novo, deve-se verificar se já existe uma entidade equivalente em outro módulo. A responsabilidade pela criação e manutenção do registro deve ser estabelecida a partir do código e do modelo de dados.
+
+6.2. Reutilização por identificadores
+Quando um módulo necessita de uma entidade já cadastrada, a integração deve priorizar sua referência por identificador e relacionamento, em vez de copiar todos os dados para um novo cadastro independente. Dados históricos específicos de uma operação, como quantidade e preço praticados em uma venda, podem exigir registro próprio, desde que isso seja previsto pela modelagem e não represente a duplicação indevida do cadastro mestre.
+
+6.3. Separação entre cadastro e movimentação
+Deve-se distinguir a descrição de um produto do seu estado operacional. Por exemplo, os dados que identificam um produto não são a mesma coisa que suas quantidades, locais de armazenamento ou movimentações. A separação precisa refletir a arquitetura e as tabelas reais do ERP.
+
+6.4. Integridade referencial
+Os registros que dependem de outras entidades devem manter relacionamentos válidos. Restrições do banco de dados, validações da aplicação e testes devem ser utilizados, conforme apropriado, para evitar referências inexistentes ou inválidas.
+
+6.5. Isolamento por empresa
+Quando o sistema opera com dados de múltiplas empresas, a consulta ou alteração de um registro deve respeitar o contexto empresarial aplicável. A existência de um identificador válido, por si só, não deve ser considerada suficiente para autorizar o acesso a um registro de outra empresa.
+
+6.6. Consistência entre operações
+Operações que envolvem múltiplos registros ou módulos devem possuir regras claras para sucesso, falha e recuperação. Quando aplicável, devem ser avaliados mecanismos transacionais, validação antes da gravação e registro de erros, a fim de evitar, por exemplo, uma venda confirmada sem a movimentação de estoque correspondente.
+
+6.7. Rastreabilidade
+Quando uma operação deriva de outra — como uma venda originada de um orçamento ou um documento fiscal associado a uma venda — os vínculos necessários devem ser preservados, se suportados pelo modelo. Isso facilita auditoria, investigação de erros e consulta ao histórico.
+
+7. PONTOS QUE EXIGEM VALIDAÇÃO NA IMPLEMENTAÇÃO
+As descrições dos módulos apresentam algumas responsabilidades que se sobrepõem conceitualmente. Antes de considerar este documento uma descrição definitiva do comportamento do sistema, recomenda-se verificar:
+
+- se clientes são cadastrados e mantidos exclusivamente em Cadastros ou se Vendas possui responsabilidade própria sobre esses registros;
+- se produtos e categorias têm cadastro mestre em Cadastros, em Estoque ou em outra estrutura compartilhada;
+- como Core e SuperAdmin dividem as responsabilidades por usuários, permissões e configurações;
+- se existe comunicação implementada entre Orçamento e Vendas para converter uma proposta em venda;
+- se Vendas aciona Estoque automaticamente durante a finalização ou o cancelamento de uma operação;
+- se Fiscal recebe dados de Vendas ou Estoque automaticamente ou se seu funcionamento é independente;
+- quais mecanismos garantem isolamento de dados por empresa;
+- quais operações são transacionais e como erros parciais são tratados.
+
+Essas verificações devem utilizar como evidência as migrations, models, relacionamentos, controllers, services, rotas, políticas de autorização e testes existentes. A presença de uma funcionalidade no texto explicativo de um módulo não comprova, isoladamente, que ela esteja concluída ou integrada no código.
+
+8. CONSIDERAÇÕES FINAIS
+A integração de dados no ERP-FATEC depende da divisão clara de responsabilidades entre os módulos e da reutilização consistente das informações compartilhadas. O Core fornece recursos transversais; SuperAdmin concentra a administração global; Cadastros oferece referências cadastrais; Estoque controla itens e movimentações; Orçamento organiza propostas; Vendas registra operações comerciais; e Fiscal trata das informações e dos procedimentos tributários.
+A integração adequada não consiste apenas em permitir que os módulos troquem informações. É necessário definir a origem oficial de cada dado, manter referências válidas, respeitar o contexto empresarial e preservar a rastreabilidade das operações. Esses princípios reduzem cadastros redundantes e divergências, além de facilitar a manutenção do ERP.
+Como etapa complementar, recomenda-se validar os fluxos conceituais descritos neste documento diretamente na implementação. Após essa verificação, o texto poderá ser atualizado para distinguir com precisão as integrações implementadas, as integrações parciais e as funcionalidades planejadas.
