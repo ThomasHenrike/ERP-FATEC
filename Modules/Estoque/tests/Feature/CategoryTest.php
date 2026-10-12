@@ -73,3 +73,5 @@ class CategoryTest extends TestCase
         $response->assertNotFound();
     }
 }
+
+//Teste categoria
