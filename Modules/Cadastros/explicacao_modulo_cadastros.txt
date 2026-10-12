@@ -1,0 +1,49 @@
+Módulo de Cadastros
+
+O módulo de Cadastros é responsável por manter os dados base do sistema, isto é, os cadastros principais utilizados por outras áreas do ERP.
+
+Objetivo do módulo:
+- registrar informações gerais do negócio;
+- manter dados de entidades e referências do sistema;
+- servir como base para outros módulos, como Estoque, Vendas, Fiscal e Orcamento.
+
+Em geral, esse módulo pode conter cadastros como:
+- clientes;
+- fornecedores;
+- produtos ou itens básicos;
+- categorias;
+- empresas ou filiais;
+- dados cadastrais gerais.
+
+Estrutura típica do módulo:
+
+Modules/Cadastros/
+  ├── app/
+  │   ├── Models/
+  │   ├── Http/
+  │   └── Providers/
+  ├── config/
+  ├── database/
+  │   ├── migrations/
+  │   └── seeders/
+  ├── resources/
+  │   ├── views/
+  │   └── js/
+  ├── routes/
+  ├── tests/
+  ├── composer.json
+  ├── module.json
+  ├── package.json
+  └── vite.config.js
+
+Função principal:
+Esse módulo centraliza as informações fundamentais que serão usadas por outras áreas do ERP. Por exemplo, o módulo de Estoque pode depender de categorias ou produtos cadastrados no módulo de Cadastros, assim como Vendas pode depender de clientes e fornecedores.
+
+Importância:
+- organiza melhor os dados do sistema;
+- evita duplicação de cadastros;
+- padroniza informações reutilizadas em vários módulos;
+- facilita manutenção e crescimento do ERP.
+
+Em resumo:
+O módulo de Cadastros é a base de dados cadastrais do sistema, mantendo as informações mestre que sustentam as operações de negócios em outras áreas do ERP.
