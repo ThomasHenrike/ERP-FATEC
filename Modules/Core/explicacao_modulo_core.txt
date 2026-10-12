@@ -1,0 +1,51 @@
+Módulo Core
+
+O módulo Core é o núcleo do sistema ERP. Ele concentra funcionalidades gerais, reutilizáveis e centrais que apoiam os demais módulos do projeto.
+
+Objetivo do módulo:
+- centralizar recursos compartilhados;
+- manter regras comuns do sistema;
+- oferecer suporte para módulos específicos, como Estoque, Vendas, Cadastros, Fiscal e Orcamento;
+- reduzir duplicação de código e lógica repetida.
+
+Em geral, o módulo Core pode conter:
+- autenticação e autorização;
+- usuários e permissões;
+- configurações globais do sistema;
+- componentes reutilizáveis;
+- helpers, utilitários e serviços compartilhados;
+- classes e regras que são usadas por vários módulos.
+
+Estrutura típica do módulo:
+
+Modules/Core/
+  ├── app/
+  │   ├── Models/
+  │   ├── Http/
+  │   ├── Services/
+  │   └── Providers/
+  ├── config/
+  ├── database/
+  │   ├── migrations/
+  │   └── seeders/
+  ├── resources/
+  │   ├── views/
+  │   └── js/
+  ├── routes/
+  ├── tests/
+  ├── composer.json
+  ├── module.json
+  ├── package.json
+  └── vite.config.js
+
+Função principal:
+O Core atua como base estrutural do ERP. Enquanto os módulos de negócio implementam funcionalidades específicas, o Core oferece infraestrutura e recursos comuns para que todos funcionem de forma integrada.
+
+Importância:
+- garante padronização;
+- facilita manutenção e evolução do sistema;
+- evita duplicação de lógica;
+- mantém o ERP mais organizado e escalável.
+
+Em resumo:
+O módulo Core é o centro da arquitetura do sistema, responsável por oferecer as estruturas e serviços fundamentais para os demais módulos operarem corretamente.
