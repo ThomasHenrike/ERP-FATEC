@@ -6,24 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'Admin Supremo' }} - ERP Modular</title>
+    <title>{{ $title ?? 'Admin Supremo' }} - MERP</title>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                    },
-                },
-            },
-        }
-    </script>
-    <style>[x-cloak] { display: none !important; }</style>
+    {{-- Mesma base visual MERP do sistema (fonte, paleta, favicon). O ambar do Admin
+         Supremo continua de proposito, pra nao confundir com a tela de uma empresa. --}}
+    <x-core::brand.head />
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </head>
@@ -142,7 +129,7 @@
 
     <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
-            Admin Supremo &bull; ERP Modular
+            Admin Supremo &bull; MERP
         </div>
     </footer>
 </body>

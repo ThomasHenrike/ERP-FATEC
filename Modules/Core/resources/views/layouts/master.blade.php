@@ -7,7 +7,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>{{ $title ?? 'ERP Modular' }} - {{ config('app.name', 'Laravel') }}</title>
+    <title>{{ isset($title) ? $title . ' - MERP' : 'MERP' }}</title>
+    <x-core::brand.favicons />
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
@@ -61,7 +62,7 @@
                             <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-extrabold text-lg shadow-sm bg-brand transition transform group-hover:scale-105">
                                 E
                             </div>
-                            <span class="font-extrabold text-lg text-gray-900 tracking-tight">{{ $tenant->trade_name ?? 'ERP Modular' }}</span>
+                            <span class="font-extrabold text-lg text-gray-900 tracking-tight">{{ $tenant->trade_name ?? 'MERP' }}</span>
                         @endif
                     </a>
 

@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Orcamento #{{ $orcamento->code }} - {{ $tenant->name ?? 'ERP Modular' }}</title>
+    <title>Orcamento #{{ $orcamento->code }} - {{ $tenant->name ?? 'MERP' }}</title>
+    <x-core::brand.favicons />
     <style>
         @page { size: A4 portrait; margin: 10mm 12mm; }
         * { box-sizing: border-box; }
@@ -14,7 +15,7 @@
         .action-bar-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
         .btn-action { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; border: none; }
         .btn-back { background-color: #374151; color: #ffffff; }
-        .btn-print { background-color: #4f46e5; color: #ffffff; }
+        .btn-print { background-color: #237552; color: #ffffff; }
         .btn-whatsapp { background-color: #059669; color: #ffffff; }
         .btn-approve { background-color: #059669; color: #ffffff; }
         .btn-reject { background-color: #dc2626; color: #ffffff; }
@@ -34,7 +35,7 @@
         table.items-table thead th { background-color: #f3f4f6; border-top: 1px solid #d1d5db; border-bottom: 2px solid #9ca3af; padding: 4px 3px; font-size: 8px; font-weight: 700; text-transform: uppercase; color: #374151; }
         table.items-table tbody td { padding: 4px 3px; border-bottom: 1px solid #e5e7eb; font-size: 9px; vertical-align: middle; }
         .col-item { width: 4%; text-align: center; }
-        .col-code { text-align: center; font-family: monospace; font-weight: 700; color: #4f46e5; }
+        .col-code { text-align: center; font-family: monospace; font-weight: 700; color: #237552; }
         .col-desc { text-align: left; }
         .col-num { text-align: center; }
         .col-money { text-align: right; font-family: monospace; white-space: nowrap; }
@@ -242,7 +243,7 @@
     </div>
 
     <div class="footer-note">
-        Documento gerado via ERP Modular &bull; Vendedor Responsavel: {{ $orcamento->user->name ?? 'Sistema' }}
+        Documento gerado via MERP &bull; Vendedor Responsavel: {{ $orcamento->user->name ?? 'Sistema' }}
     </div>
     </div>
 </body>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-50">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-gray-100">
 
 <head>
     <meta charset="utf-8">
@@ -7,26 +7,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>{{ $title ?? 'ERP Modular' }} - {{ config('app.name', 'Laravel') }}</title>
+    {{-- Nome fixo, e nao config('app.name'): o APP_NAME tambem define o cookie de sessao
+         (config/session.php), entao nao da pra troca-lo em producao so por causa do titulo. --}}
+    <title>{{ isset($title) ? $title . ' - MERP' : 'MERP' }}</title>
 
-    <!-- Tipografia Figtree -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-
-    <!-- Tailwind CSS com plugin de formularios (@tailwindcss/forms) -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-                    },
-                },
-            },
-        }
-    </script>
-    <style>[x-cloak] { display: none !important; }</style>
+    {{-- Favicons, fonte Inter e Tailwind (CDN) com a paleta MERP --}}
+    <x-core::brand.head />
 
     {{--
         Cor personalizada da empresa (Configuracoes > Identidade Visual). Fica no
@@ -37,9 +23,14 @@
     --}}
     @php
         $tenantAtual = app()->bound('currentTenant') ? app('currentTenant') : null;
-        $brandColor = $tenantAtual->primary_color ?? '#4f46e5';
+        $brandColor = $tenantAtual?->corPrincipal() ?? \Modules\Core\App\Models\Tenant::COR_PADRAO;
         $isAdmin = app(\Modules\Core\App\Services\TenantManager::class)->hasRoleAtLeast('admin');
         $isManagerOrAboveNav = app(\Modules\Core\App\Services\TenantManager::class)->hasRoleAtLeast('manager');
+
+        // Itens da barra superior (fundo grafite). Ativo: verde 300 sobre a superficie,
+        // com a linha verde embaixo - o verde fica so no acento, nunca no fundo.
+        $navAtivo = 'bg-merp-superficie text-merp-verde-300 shadow-[inset_0_-2px_0_#3FBF87]';
+        $navInativo = 'text-gray-300 hover:text-merp-nevoa hover:bg-merp-superficie';
     @endphp
     <style>
         :root { --color-brand: {{ $brandColor }}; }
@@ -152,7 +143,7 @@
     @endif
 </head>
 
-<body class="h-full font-sans antialiased text-gray-900 bg-gray-50 flex flex-col min-h-screen">
+<body class="h-full font-sans antialiased text-gray-900 bg-gray-100 flex flex-col min-h-screen">
     @auth
         @if (session('impersonation'))
             {{-- Faixa obrigatoria enquanto um admin do Admin Supremo esta logado
@@ -176,25 +167,25 @@
         @endif
 
         {{-- Barra de Navegacao Superior Global do ERP --}}
-        <header class="bg-white border-b border-gray-200 sticky top-0 z-30" x-data="{ mobileOpen: false }">
+        <header class="bg-merp-grafite border-b border-merp-superficie sticky top-0 z-30" x-data="{ mobileOpen: false }">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center gap-6">
-                        <a href="{{ route('dashboard') }}" class="flex-shrink-0 flex items-center gap-2">
-                            <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                                E
-                            </div>
-                            <span class="font-bold text-lg text-gray-900 tracking-tight hidden sm:inline">ERP Modular</span>
+                        {{-- Assinatura horizontal (versao para fundo escuro); em tela estreita,
+                             com o menu recolhido, fica so o simbolo --}}
+                        <a href="{{ route('dashboard') }}" class="flex-shrink-0 flex items-center" title="MERP - Painel">
+                            <x-core::brand.logo variante="horizontal" class="hidden sm:block h-10 w-auto" />
+                            <x-core::brand.logo variante="simbolo" class="sm:hidden h-8 w-8" />
                         </a>
 
                         <nav class="hidden md:flex items-center gap-1">
                             <a href="{{ route('dashboard') }}"
-                               class="px-3 py-2 rounded-md text-sm font-medium transition {{ request()->routeIs('dashboard') ? 'bg-brand-soft text-brand font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                               class="px-3 py-2 rounded-md text-sm font-medium transition {{ request()->routeIs('dashboard') ? $navAtivo : $navInativo }}">
                                 Dashboard
                             </a>
 
                             <a href="{{ route('core.ajuda.index') }}"
-                               class="px-3 py-2 rounded-md text-sm font-medium transition {{ request()->routeIs('core.ajuda.*', 'core.suporte.*') ? 'bg-brand-soft text-brand font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                               class="px-3 py-2 rounded-md text-sm font-medium transition {{ request()->routeIs('core.ajuda.*', 'core.suporte.*') ? $navAtivo : $navInativo }}">
                                 Ajuda
                             </a>
 
@@ -241,7 +232,7 @@
                              do item "Ajuda" da navbar principal --}}
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                             <button @click="open = !open" title="Ajuda"
-                                    class="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition font-bold text-sm">
+                                    class="w-8 h-8 flex items-center justify-center rounded-full text-gray-300 hover:text-merp-nevoa hover:bg-merp-superficie transition font-bold text-sm">
                                 ?
                             </button>
 
@@ -262,18 +253,19 @@
                         </div>
 
                         @if ($tenantAtual)
-                            <span class="hidden sm:inline-flex text-xs px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-medium">
+                            <span class="hidden sm:inline-block max-w-[12rem] xl:max-w-[16rem] truncate whitespace-nowrap text-xs px-2.5 py-1 bg-merp-superficie text-merp-nevoa border border-gray-700 rounded-full font-medium"
+                                  title="{{ $tenantAtual->trade_name ?? $tenantAtual->name }}">
                                 {{ $tenantAtual->trade_name ?? $tenantAtual->name }}
                             </span>
                         @endif
 
                         {{-- Menu do Usuario --}}
                         <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                            <button @click="open = !open" class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900">
-                                <span class="w-8 h-8 rounded-full bg-brand-soft text-brand flex items-center justify-center font-bold text-xs">
+                            <button @click="open = !open" class="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-merp-nevoa">
+                                <span class="w-8 h-8 rounded-full bg-merp-superficie text-merp-verde-300 border border-gray-700 flex items-center justify-center font-bold text-xs">
                                     {{ Illuminate\Support\Str::of(auth()->user()->name)->substr(0, 1)->upper() }}
                                 </span>
-                                <span class="hidden sm:inline">{{ auth()->user()->name }}</span>
+                                <span class="hidden xl:inline whitespace-nowrap">{{ auth()->user()->name }}</span>
                             </button>
 
                             <div x-show="open" x-cloak x-transition
@@ -299,7 +291,7 @@
                         </div>
 
                         {{-- Botao do Menu Mobile --}}
-                        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-gray-500 hover:text-gray-700">
+                        <button @click="mobileOpen = !mobileOpen" class="md:hidden p-2 text-gray-300 hover:text-merp-nevoa">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path x-show="!mobileOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 <path x-show="mobileOpen" x-cloak stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -347,19 +339,9 @@
                 </div>
             </div>
         </header>
-    @else
-        {{-- Cabecalho minimo para telas publicas (login / cadastro de empresa) --}}
-        <header class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
-                <a href="{{ route('login') }}" class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                        E
-                    </div>
-                    <span class="font-bold text-lg text-gray-900 tracking-tight">ERP Modular</span>
-                </a>
-            </div>
-        </header>
     @endauth
+    {{-- Telas publicas (login / cadastro de empresa) nao tem cabecalho: o logo MERP
+         fica na propria tela, acima do formulario. --}}
 
     {{-- Conteudo Principal Injetado pelo Slot dos Modulos --}}
     <main class="flex-1">
@@ -368,8 +350,8 @@
 
     {{-- Rodape Informativo --}}
     <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
-            ERP Modular v1.0 &bull; Ambiente {{ config('app.env') === 'production' ? 'Producao' : 'Local' }}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-500">
+            MERP v1.0 &bull; Ambiente {{ config('app.env') === 'production' ? 'Producao' : 'Local' }}
         </div>
     </footer>
 </body>

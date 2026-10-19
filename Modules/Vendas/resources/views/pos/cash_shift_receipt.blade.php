@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Fechamento de Caixa #{{ $shift->id }} - {{ $tenant->name ?? 'ERP Modular' }}</title>
+    <title>Fechamento de Caixa #{{ $shift->id }} - {{ $tenant->name ?? 'MERP' }}</title>
+    <x-core::brand.favicons />
     <style>
         @page { 
             size: A4 portrait; 
@@ -60,7 +61,7 @@
         }
         .btn-back { background-color: #374151; color: #ffffff; }
         .btn-back:hover { background-color: #4b5563; }
-        .btn-print { background-color: #4f46e5; color: #ffffff; }
+        .btn-print { background-color: #237552; color: #ffffff; }
         .btn-print:hover { background-color: #4338ca; }
 
         /* Cabecalho Centralizado */
@@ -243,7 +244,7 @@
             <div class="row-detail" style="color: #dc2626;"><span>Sangrias / Retiradas (-):</span><span class="val-money">- R$ {{ number_format((float)$summary['total_outflows'], 2, ',', '.') }}</span></div>
             <div class="row-detail total">
                 <span>SALDO ESPERADO NA GAVETA:</span>
-                <span class="val-money" style="color: #4f46e5;">R$ {{ number_format((float)$summary['expected_drawer_cash'], 2, ',', '.') }}</span>
+                <span class="val-money" style="color: #237552;">R$ {{ number_format((float)$summary['expected_drawer_cash'], 2, ',', '.') }}</span>
             </div>
         </div>
     </div>

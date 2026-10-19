@@ -1,6 +1,6 @@
 # Financeiro: Faturas da Assinatura
 
-Importante: este Financeiro é sobre a **assinatura da sua empresa no ERP Modular** (a mensalidade que vocês pagam pelo sistema) — não é um controle financeiro do seu próprio negócio.
+Importante: este Financeiro é sobre a **assinatura da sua empresa no MERP** (a mensalidade que vocês pagam pelo sistema) — não é um controle financeiro do seu próprio negócio.
 
 ## Onde ver
 

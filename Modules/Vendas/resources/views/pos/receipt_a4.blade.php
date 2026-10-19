@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Romaneio de Venda #{{ $sale->code }} - {{ $tenant->name ?? 'ERP Modular' }}</title>
+    <title>Romaneio de Venda #{{ $sale->code }} - {{ $tenant->name ?? 'MERP' }}</title>
+    <x-core::brand.favicons />
     <style>
         @page { size: A4 portrait; margin: 12mm 15mm; }
         * { box-sizing: border-box; }
@@ -13,7 +14,7 @@
         .btn-action { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; border: none; }
         .btn-back { background-color: #374151; color: #ffffff; }
         .btn-back:hover { background-color: #4b5563; }
-        .btn-print { background-color: #4f46e5; color: #ffffff; }
+        .btn-print { background-color: #237552; color: #ffffff; }
         .btn-print:hover { background-color: #4338ca; }
         .company-header { text-align: center; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 16px; }
         .company-logo { max-height: 60px; max-width: 200px; margin: 0 auto 8px auto; display: block; object-fit: contain; }
@@ -28,7 +29,7 @@
         table.items-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; table-layout: fixed; }
         table.items-table thead th { background-color: #f3f4f6; border-top: 1px solid #d1d5db; border-bottom: 2px solid #9ca3af; padding: 8px 6px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: #374151; }
         table.items-table tbody td { padding: 8px 6px; border-bottom: 1px solid #e5e7eb; font-size: 11.5px; vertical-align: middle; }
-        .col-code { width: 9%; text-align: center; font-family: monospace; font-weight: 700; color: #4f46e5; }
+        .col-code { width: 9%; text-align: center; font-family: monospace; font-weight: 700; color: #237552; }
         .col-desc { width: 43%; }
         .col-unit { width: 7%; text-align: center; color: #6b7280; }
         .col-qty  { width: 11%; text-align: center; font-weight: 700; }
@@ -102,7 +103,7 @@
     <div class="meta-container">
         <div class="meta-item">
             <strong>Numero da Venda:</strong><br>
-            <span style="font-size: 13px; color: #4f46e5;">#{{ $sale->code }}</span>
+            <span style="font-size: 13px; color: #237552;">#{{ $sale->code }}</span>
         </div>
         <div class="meta-item">
             <strong>Data / Hora:</strong><br>
@@ -193,7 +194,7 @@
             @endif
             <div class="totals-row final">
                 <span>VALOR LIQUIDO:</span>
-                <span style="font-family: monospace; color: #4f46e5;">R$ {{ number_format((float) $sale->total_amount, 2, ',', '.') }}</span>
+                <span style="font-family: monospace; color: #237552;">R$ {{ number_format((float) $sale->total_amount, 2, ',', '.') }}</span>
             </div>
             @if ((float) $sale->amount_received > 0 && ($sale->payment_method === 'money' || (float)$sale->change_amount > 0))
                 <div class="totals-row received">
@@ -215,7 +216,7 @@
     </div>
 
     <div class="footer-note">
-        {{ $tenant->receipt_footer ?? 'Comprovante impresso via ERP Modular. Agradecemos a preferencia!' }}
+        {{ $tenant->receipt_footer ?? 'Comprovante impresso via MERP. Agradecemos a preferencia!' }}
     </div>
 
     <script>

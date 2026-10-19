@@ -1,6 +1,6 @@
 # Visão Geral do Sistema
 
-O ERP Modular é organizado em módulos independentes, que aparecem no menu no topo da tela conforme forem ativados para a sua empresa:
+O MERP é organizado em módulos independentes, que aparecem no menu no topo da tela conforme forem ativados para a sua empresa:
 
 - **Cadastros** — clientes, fornecedores e equipe.
 - **Estoque** — produtos, categorias e movimentações (kardex).
