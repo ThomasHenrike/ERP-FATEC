@@ -2,7 +2,7 @@
     <div class="p-6 max-w-7xl mx-auto space-y-6">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Financeiro</h1>
-            <p class="text-sm text-gray-500">Faturas e cobrancas da assinatura do seu plano no ERP Modular</p>
+            <p class="text-sm text-gray-500">Faturas e cobrancas da assinatura do seu plano no MERP</p>
         </div>
 
         @if ($nextDue && $nextDue->status === 'overdue')

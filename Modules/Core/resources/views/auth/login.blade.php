@@ -1,10 +1,9 @@
 <x-core::layouts.master>
     <div class="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-            <div class="w-12 h-12 bg-indigo-600 rounded-xl mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-md">
-                E
-            </div>
-            <h2 class="mt-4 text-3xl font-extrabold text-gray-900 tracking-tight">
+            {{-- Logo vertical MERP (versao para fundo claro) --}}
+            <x-core::brand.logo variante="vertical-claro" class="mx-auto h-32 w-auto" />
+            <h2 class="mt-2 text-2xl font-medium text-gray-900 tracking-tight">
                 Acesse sua conta
             </h2>
             <p class="mt-2 text-sm text-gray-600">

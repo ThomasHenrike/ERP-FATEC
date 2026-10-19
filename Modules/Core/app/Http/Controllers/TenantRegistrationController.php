@@ -59,6 +59,6 @@ class TenantRegistrationController extends Controller
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Empresa criada com sucesso! Bem-vindo ao ERP Modular.');
+            ->with('success', 'Empresa criada com sucesso! Bem-vindo ao MERP.');
     }
 }

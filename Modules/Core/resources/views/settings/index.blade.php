@@ -1,5 +1,5 @@
 <x-core::layouts.master>
-    <div class="p-6 max-w-6xl mx-auto space-y-6" x-data="{ activeTab: 'general', selectedColor: '{{ $tenant->primary_color ?? '#4f46e5' }}' }">
+    <div class="p-6 max-w-6xl mx-auto space-y-6" x-data="{ activeTab: 'general', selectedColor: '{{ $tenant->corPrincipal() }}' }">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Configuracoes do Estabelecimento</h1>
             <p class="text-sm text-gray-500">Parametrizacao de identidade visual, formatos de impressao e seguranca fiscal</p>
@@ -79,7 +79,7 @@
                                 
                                 {{-- Paletas Rapidas --}}
                                 <div class="flex gap-1.5 pl-2 border-l border-gray-300">
-                                    <button type="button" @click="selectedColor = '#4f46e5'" class="w-6 h-6 rounded-full bg-[#4f46e5] border" title="Indigo Padrao"></button>
+                                    <button type="button" @click="selectedColor = '#237552'" class="w-6 h-6 rounded-full bg-[#237552] border" title="Verde MERP (padrao)"></button>
                                     <button type="button" @click="selectedColor = '#059669'" class="w-6 h-6 rounded-full bg-[#059669] border" title="Verde Esmeralda"></button>
                                     <button type="button" @click="selectedColor = '#2563eb'" class="w-6 h-6 rounded-full bg-[#2563eb] border" title="Azul Royal"></button>
                                     <button type="button" @click="selectedColor = '#d97706'" class="w-6 h-6 rounded-full bg-[#d97706] border" title="Ambar / Laranja"></button>

@@ -1,6 +1,9 @@
 <x-core::layouts.master>
     <div class="min-h-[85vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-xl text-center">
+            <a href="{{ route('login') }}" class="inline-block mb-4" title="MERP - voltar ao login">
+                <x-core::brand.logo variante="horizontal-claro" class="h-14 w-auto" />
+            </a>
             <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Cadastre sua Empresa</h2>
             <p class="mt-2 text-sm text-gray-600">Configure o ambiente corporativo e o acesso do primeiro administrador</p>
         </div>

@@ -26,34 +26,35 @@
 
 
         {{-- Banner Principal com Acesso Rapido ao PDV e Status do Caixa --}}
-        <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 rounded-2xl p-6 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+        {{-- Grafite (e nao gradiente da cor primaria): o guia MERP nao preenche areas grandes com verde --}}
+        <div class="bg-merp-grafite rounded-2xl p-6 text-merp-nevoa shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="space-y-1.5">
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-2.5 py-0.5 bg-indigo-700/80 text-white rounded-full text-[11px] font-bold uppercase tracking-wider">
+                    <span class="px-2.5 py-0.5 bg-merp-superficie text-merp-nevoa border border-gray-700 rounded-full text-[11px] font-bold uppercase tracking-wider">
                         {{ $tenant->trade_name ?? $tenant->name }}
                     </span>
 
                     {{-- Indicador de Status do Caixa e Quem Abriu --}}
                     @if ($openCashShifts->isNotEmpty())
                         @foreach ($openCashShifts as $shift)
-                            <span class="px-3 py-0.5 bg-emerald-500 text-white rounded-full text-xs font-extrabold flex items-center gap-1 shadow-sm">
+                            <span class="px-3 py-0.5 bg-merp-superficie text-merp-verde-300 border border-merp-verde-700 rounded-full text-xs font-extrabold flex items-center gap-1 shadow-sm">
                                 <span>●</span> Caixa Aberto por: {{ $shift->user->name }} (#{{ $shift->id }} desde {{ $shift->opened_at->format('H:i') }})
                             </span>
                         @endforeach
                     @else
-                        <span class="px-3 py-0.5 bg-amber-500 text-white rounded-full text-xs font-extrabold flex items-center gap-1 shadow-sm">
+                        <span class="px-3 py-0.5 bg-amber-500 text-merp-grafite rounded-full text-xs font-extrabold flex items-center gap-1 shadow-sm">
                             <span>○</span> Nenhum Caixa Aberto no Momento
                         </span>
                     @endif
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Painel de Gestao Integrada</h1>
-                <p class="text-xs sm:text-sm text-indigo-200">Central de controle operacional, estoque, vendas e pessoas</p>
+                <p class="text-xs sm:text-sm text-gray-300">Central de controle operacional, estoque, vendas e pessoas</p>
             </div>
 
             @if ($tenant->hasModule('vendas'))
                 <div class="flex-shrink-0">
                     <a href="{{ route('vendas.pos.index') }}"
-                       class="inline-flex items-center gap-3 px-6 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-extrabold text-base shadow-lg hover:shadow-emerald-500/30 transition transform hover:-translate-y-0.5">
+                       class="inline-flex items-center gap-3 px-6 py-4 bg-merp-verde hover:bg-merp-verde-400 text-merp-grafite rounded-xl font-extrabold text-base shadow-lg hover:shadow-merp-verde/30 transition transform hover:-translate-y-0.5">
                         <span class="text-xl">$</span>
                         <span>ACESSAR FRENTE DE CAIXA (PDV)</span>
                     </a>
