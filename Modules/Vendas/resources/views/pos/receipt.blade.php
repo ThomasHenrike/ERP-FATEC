@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Cupom #{{ $sale->code }} - {{ $tenant->name ?? 'ERP Modular' }}</title>
+    <title>Cupom #{{ $sale->code }} - {{ $tenant->name ?? 'MERP' }}</title>
+    <x-core::brand.favicons />
     <style>
         @page { margin: 0; }
         body { font-family: monospace; font-size: 12px; width: 80mm; margin: 0; padding: 10px; color: #000; }
@@ -37,7 +38,7 @@
             justify-content: center;
         }
         .btn-back { background: #4b5563; color: #fff; }
-        .btn-print { background: #4f46e5; color: #fff; }
+        .btn-print { background: #237552; color: #fff; }
 
         @media print {
             .no-print { display: none !important; }
@@ -49,7 +50,7 @@
     {{-- Barra Flutuante de Controle Hibrido (Termica e A4) --}}
     <div class="action-bar-screen no-print">
         <button type="button" onclick="handleReturnToPos()" class="btn-action btn-back">&larr; Caixa</button>
-        <a href="{{ route('vendas.pos.receipt', ['sale' => $sale, 'format' => 'a4']) }}" class="btn-action" style="background-color: #4f46e5; color: #fff; text-decoration: none;">
+        <a href="{{ route('vendas.pos.receipt', ['sale' => $sale, 'format' => 'a4']) }}" class="btn-action" style="background-color: #237552; color: #fff; text-decoration: none;">
             Ver em A4
         </a>
         <button type="button" onclick="window.print()" class="btn-action btn-print">&#128438; Imprimir</button>

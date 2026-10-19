@@ -8,6 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
         <title>Orcamento Module - {{ config('app.name', 'Laravel') }}</title>
+        <x-core::brand.favicons />
 
         <meta name="description" content="{{ $description ?? '' }}">
         <meta name="keywords" content="{{ $keywords ?? '' }}">

@@ -133,6 +133,32 @@ class Tenant extends Model
     }
 
     /**
+     * Cor principal da identidade MERP (verde 700: legivel com texto claro e sobre fundo claro).
+     */
+    public const COR_PADRAO = '#237552';
+
+    /**
+     * Indigo que a migration gravava como padrao em toda empresa nova. Quem ainda tem esse
+     * valor nunca escolheu cor nenhuma, entao passa a receber a cor MERP sem precisar de
+     * migration mexendo nos dados.
+     */
+    public const COR_PADRAO_ANTIGA = '#4f46e5';
+
+    /**
+     * Cor efetiva usada nas telas (.bg-brand / .text-brand).
+     */
+    public function corPrincipal(): string
+    {
+        $cor = $this->primary_color;
+
+        if (empty($cor) || strtolower($cor) === self::COR_PADRAO_ANTIGA) {
+            return self::COR_PADRAO;
+        }
+
+        return $cor;
+    }
+
+    /**
      * Entrega a imagem da logomarca em Base64 Data URI com resolucao de dupla camada.
      * Funciona em 100% dos ambientes (Windows, Linux, HostGator, impressoras A4 e PDFs).
      */
