@@ -7,7 +7,7 @@ Sistema de Gestão Empresarial (ERP) modular e multi-tenant (multi-empresa), con
 - **PHP** 8.3+ (produção roda em 8.4)
 - **Laravel** 13
 - **nwidart/laravel-modules** — cada módulo de negócio é isolado em `Modules/{Nome}`
-- **SQLite** — banco padrão local e em produção
+- **MySQL** — banco padrão local e em produção
 - **Blade + Alpine.js + Tailwind CSS** (via CDN, sem etapa de build obrigatória)
 - **PHPUnit** para os testes automatizados
 
