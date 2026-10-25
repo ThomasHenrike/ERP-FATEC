@@ -21,7 +21,10 @@ class IdentifyTenant
         private readonly TenantManager $tenantManager
     ) {}
 
-    public function handle(Request $request, Closure $next): Response
+    //Pelos testes realizado a função abaixo não funciona em um sistema operacional Linux
+    //O middleware deteta que o utilizador não está logado (!Auth::check()) e redireciona-o para a rota login
+    //Ao tentar abrir a página de login, o middleware volta a ser executado, vê que o utilizador continua sem estar logado e redireciona para o login novamente, gerando o ciclo infinito!
+    public function handle(Request $request, Closure $next): Response 
     {
         if (!Auth::check()) {
             return redirect()->route('login');
@@ -30,9 +33,22 @@ class IdentifyTenant
         $user = Auth::user();
         $sessionTenantId = session('active_tenant_id');
 
-        // Busca a empresa na sessao ou a primeira empresa vinculada e ativa do usuario
-        // (so conta vinculo com tenant_user.is_active = true - usuario desativado
-        // pela propria empresa nao consegue mais acessar)
+     //Durante os teste foi possivel acessar apenas ajustando o codigo para
+     /*public function __construct(
+        private readonly TenantManager $tenantManager
+    ) {}
+
+        public function handle(Request $request, Closure $next): Response
+    {
+        Registo de teste para ver o caminho que está a chegar ao middleware
+        if ($request->is('login*') || $request->is('admin/login*')) {
+            return $next($request);
+        }
+
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }*/
+
         $tenant = null;
         if ($sessionTenantId) {
             $tenant = Tenant::where('id', $sessionTenantId)
@@ -40,18 +56,28 @@ class IdentifyTenant
                 ->whereHas('users', fn($q) => $q->where('users.id', $user->id)->where('tenant_user.is_active', true))
                 ->first();
         }
-
+        //O if do (!$tenant) também era responsável pelo loop eterno
         if (!$tenant) {
             $tenant = Tenant::where('is_active', true)
                 ->whereHas('users', fn($q) => $q->where('users.id', $user->id)->where('tenant_user.is_active', true))
                 ->first();
         }
+        //Foi possivel continuar com os testes apenas alterando o código para
+        /*f (!$tenant) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        
+            return redirect()->route('core.tenant.create')
+                ->with('error', 'Cadastre uma empresa para iniciar as operacoes.');
+        } */
 
         if (!$tenant) {
             // Usuario sem empresa vinculada e redirecionado para o onboarding
             return redirect()->route('core.tenant.create')
                 ->with('error', 'Cadastre uma empresa para iniciar as operacoes.');
         }
+
 
         $role = DB::table('tenant_user')
             ->where('tenant_id', $tenant->id)
