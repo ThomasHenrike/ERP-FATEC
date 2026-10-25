@@ -73,4 +73,16 @@ class TenantIsolationTest extends TestCase
 
         $response->assertNotFound();
     }
+
+    public function test_user_without_active_tenant_reaches_onboarding_without_redirect_loop(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard'));
+
+        $response->assertRedirect(route('core.tenant.create'));
+        $this->assertGuest();
+
+        $this->get(route('core.tenant.create'))->assertOk();
+    }
 }
