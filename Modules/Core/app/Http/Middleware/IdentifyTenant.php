@@ -48,7 +48,14 @@ class IdentifyTenant
         }
 
         if (!$tenant) {
-            // Usuario sem empresa vinculada e redirecionado para o onboarding
+            // Usuario sem empresa vinculada e redirecionado para o onboarding.
+            // Precisa deslogar antes: 'cadastrar-empresa' fica no grupo 'guest',
+            // que manda usuario logado de volta pro dashboard, que passa por
+            // aqui de novo - redirecionamento infinito (reportado pelo Matheus).
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
             return redirect()->route('core.tenant.create')
                 ->with('error', 'Cadastre uma empresa para iniciar as operacoes.');
         }
