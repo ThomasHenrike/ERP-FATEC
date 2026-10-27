@@ -1,13 +1,13 @@
 # Stored Procedures
 
 Documentação das stored procedures (procedimentos armazenados) do banco de dados do ERP-FATEC. O
-sistema possui **17 stored procedures**, todas no banco MySQL/MariaDB, criadas por três migrations:
+sistema possui **17 stored procedures**, todas no banco MySQL/MariaDB:
 
-| Migration | Procedures |
+| Área | Procedures |
 |---|---|
-| `database/migrations/2026_10_19_000000_create_stored_procedures.php` | 4 — relatórios de vendas, inadimplência e ajuste de estoque |
-| `Modules/Estoque/database/migrations/2026_10_26_100000_create_estoque_procedures.php` | 10 — consulta, inserção, atualização e exclusão de produtos |
-| `Modules/Vendas/database/migrations/2026_10_26_100001_create_vendas_procedures.php` | 3 — comissão, resumo de caixa e crediário |
+| Produtos (Estoque) | 10 — consulta, inserção, atualização e exclusão de produtos |
+| Vendas e crediário | 6 — vendas no período, ranking, comissão, caixa, contas a receber e inadimplência |
+| Ajuste de estoque | 1 — entrada ou saída de estoque com transação |
 
 ## O que é uma stored procedure
 
@@ -66,30 +66,12 @@ parâmetros, seria preciso uma procedure (ou uma consulta escrita à mão) para 
 | `sp_clientes_inadimplentes` | empresa, dias | Clientes com títulos vencidos há mais de N dias | Consulta |
 | `sp_ajustar_estoque` | empresa, produto, quantidade, motivo, usuário, **saída: novo saldo** | Entrada ou saída de estoque com registro no kardex | Alteração com transação |
 
-## Mapa da lista de exercícios
-
-| Exercício | Pede | Procedure |
-|---|---|---|
-| 7 | Buscar pelo ID da tabela principal | `sp_produto_por_id` |
-| 8 | Pesquisar pelo nome | `sp_pdv_buscar_produto` |
-| 9 | Filtrar por categoria | `sp_produtos_por_categoria` |
-| 10 | Inserir com parâmetros | `sp_inserir_produto` |
-| 11 | Atualizar um campo | `sp_atualizar_preco_produto` |
-| 12 | Excluir pelo ID | `sp_excluir_produto` (exclusão lógica) |
-| 13 | Dois parâmetros no `WHERE` | `sp_contas_receber_cliente`, `sp_produtos_por_faixa_preco` |
-| 14 | Faixa de valores | `sp_produtos_por_faixa_preco` |
-| 15 | Filtro por data | `sp_vendas_por_periodo`, `sp_kardex_produto` |
-| 16 | Ordenar por campo escolhido | `sp_listar_produtos_ordenados` |
-| 17 a 23 | Executar com valores diferentes, inexistentes e inválidos | Prints de cada procedure, abaixo |
-| 30 | Operações candidatas a procedure | `sp_produtos_abaixo_estoque_minimo`, `sp_produtos_mais_vendidos`, `sp_comissao_vendedores`, `sp_resumo_caixa`, `sp_kardex_produto`, `sp_ajustar_estoque` |
-
 ## Dados usados nos exemplos
 
 Os prints abaixo foram tirados em 26/10/2026 no cliente de linha de comando do **MariaDB 11.4.5**,
-num banco criado do zero com `php artisan migrate --seed` (os mesmos dados de exemplo da
-[Views](Views)). Como o seeder não cria vendas, foram lançadas pelo próprio sistema
-(`SaleService`), na empresa 1, num turno de caixa aberto com R$ 200,00 de fundo de troco,
-R$ 50,00 de suprimento e R$ 100,00 de sangria:
+num banco criado do zero com os dados de exemplo do sistema (os mesmos da [Views](Views)). Foram
+lançadas 4 vendas pelo próprio PDV, na empresa 1, num turno de caixa aberto com R$ 200,00 de fundo
+de troco, R$ 50,00 de suprimento e R$ 100,00 de sangria:
 
 | Venda | Itens | Pagamento | Vendedor |
 |---|---|---|---|
@@ -102,7 +84,7 @@ Empresa **1** é a "Empresa Matriz Servicos e Comercio LTDA" (dona dos produtos)
 usada para mostrar o isolamento entre empresas. As procedures foram executadas na ordem desta
 página, então as alterações feitas por uma (inserção, novo preço, exclusão) aparecem nas
 seguintes. Datas e horas gravadas pelo sistema aparecem em UTC (3 horas a mais que o horário de
-Brasília). Os mesmos prints estão na pasta `fotosMySQL/` do projeto.
+Brasília).
 
 ---
 
@@ -110,7 +92,7 @@ Brasília). Os mesmos prints estão na pasta `fotosMySQL/` do projeto.
 
 ### sp_produto_por_id
 
-Busca um produto pelo ID, com o nome da categoria (exercício 7). Executada com três IDs diferentes
+Busca um produto pelo ID, com o nome da categoria. Executada com três IDs diferentes
 e com um produto de outra empresa: o produto 1 existe, mas pertence à empresa 1, então a empresa 2
 recebe `Empty set` — a consulta roda sem erro e não devolve linhas.
 
@@ -142,7 +124,7 @@ DELIMITER ;
 
 ### sp_pdv_buscar_produto
 
-A busca do PDV (exercício 8). Encontra produtos ativos pelo código interno, código de barras ou SKU
+A busca do PDV. Encontra produtos ativos pelo código interno, código de barras ou SKU
 exatos, ou por parte do nome; as correspondências exatas vêm primeiro, que é o que o leitor de
 código de barras espera. Os curingas do `LIKE` (`%` e `_`) digitados são tratados como texto comum.
 
@@ -197,7 +179,7 @@ DELIMITER ;
 
 ### sp_produtos_por_categoria
 
-Lista os produtos ativos de uma categoria (exercício 9): categoria 2 (Disjuntores e Quadros de
+Lista os produtos ativos de uma categoria: categoria 2 (Disjuntores e Quadros de
 Distribuição) e categoria 4 (Iluminação e Lâmpadas).
 
 ![sp_produtos_por_categoria](imagens/procedures/03_sp_produtos_por_categoria.png)
@@ -229,9 +211,9 @@ DELIMITER ;
 
 ### sp_produtos_por_faixa_preco
 
-Produtos com preço entre um mínimo e um máximo (exercícios 13 e 14). O preço vem da tabela
+Produtos com preço entre um mínimo e um máximo. O preço vem da tabela
 escolhida — `retail` (varejo), `resale` (revenda) ou `wholesale` (atacado); se o produto não tiver
-preço de revenda ou atacado, usa o de varejo, a mesma regra de `Product::getPriceForTable`.
+preço de revenda ou atacado, usa o de varejo, a mesma regra do sistema.
 
 Com a mesma faixa, a revenda traz outros produtos: o Disjuntor Bipolar (R$ 34,10 no varejo) entra
 porque na revenda sai por R$ 28,60. Faixa invertida é recusada com erro.
@@ -285,7 +267,7 @@ DELIMITER ;
 
 ### sp_listar_produtos_ordenados
 
-Lista os produtos ativos ordenados pelo campo e pela direção escolhidos (exercício 16): `nome`,
+Lista os produtos ativos ordenados pelo campo e pela direção escolhidos: `nome`,
 `preco`, `estoque` ou `codigo`, em `ASC` ou `DESC`. O campo não é colado no SQL: um `CASE` por
 campo e direção escolhe a coluna, e qualquer valor fora da lista gera erro. Assim não há risco de
 SQL injection, e números são ordenados como números (não como texto, em que "100" viria antes de
@@ -341,9 +323,8 @@ DELIMITER ;
 ### sp_produtos_abaixo_estoque_minimo
 
 O que precisa ser reposto: produtos ativos com estoque mínimo definido e saldo igual ou abaixo
-dele, do que mais falta para o que menos falta. É o mesmo critério do sistema
-(`Product::isLowStock`). A view `vw_estoque_abaixo_minimo` usa um critério um pouco diferente (só
-`<`, e inclui mínimo zero). A empresa 2 não tem produtos.
+dele, do que mais falta para o que menos falta — o mesmo critério do alerta de estoque do sistema.
+A empresa 2 não tem produtos.
 
 ![sp_produtos_abaixo_estoque_minimo](imagens/procedures/06_sp_produtos_abaixo_estoque_minimo.png)
 
@@ -376,8 +357,8 @@ DELIMITER ;
 ### sp_kardex_produto
 
 Extrato de estoque (kardex) de um produto num período, com o saldo antes e depois de cada
-movimento (exercício 15): a carga inicial do seeder e a saída de cada venda. Período invertido é
-recusado com erro.
+movimento: a carga inicial de estoque e a saída de cada venda. Período invertido é recusado com
+erro.
 
 ![sp_kardex_produto](imagens/procedures/07_sp_kardex_produto.png)
 
@@ -421,7 +402,7 @@ DELIMITER ;
 
 ### sp_inserir_produto
 
-Cadastra um produto (exercício 10). O código interno é o maior código da empresa + 1, como faz o
+Cadastra um produto. O código interno é o maior código da empresa + 1, como faz o
 sistema — cada empresa tem sua própria sequência. A margem de varejo é calculada como na tela de
 produto: `(preço ÷ custo − 1) × 100`. Os campos fiscais não informados recebem os valores padrão
 da tabela, e o estoque começa em zero (a entrada de mercadoria é feita pelo kardex).
@@ -506,7 +487,7 @@ DELIMITER ;
 
 ### sp_atualizar_preco_produto
 
-Altera o preço de varejo de um produto (exercício 11) e recalcula a margem, como faz a tela de
+Altera o preço de varejo de um produto e recalcula a margem, como faz a tela de
 produto. Com custo zero, a margem fica como estava. Na última chamada, a empresa 2 tentou mudar o
 preço de um produto da empresa 1: a procedure recusa e o preço continua R$ 210,25.
 
@@ -555,7 +536,7 @@ DELIMITER ;
 
 ### sp_excluir_produto
 
-Exclui um produto pelo ID (exercício 12). A exclusão é **lógica**: a procedure preenche
+Exclui um produto pelo ID. A exclusão é **lógica**: a procedure preenche
 `deleted_at` em vez de apagar a linha. O produto some de todas as consultas, mas as vendas e o
 kardex que apontam para ele continuam íntegros — um `DELETE` físico quebraria o histórico (e seria
 barrado pela chave estrangeira de `sale_items`).
@@ -727,10 +708,9 @@ DELIMITER ;
 ### sp_resumo_caixa
 
 Resumo de um turno de caixa: fundo de troco, vendas por forma de pagamento, suprimentos, sangrias
-e o saldo esperado na gaveta. Usa o mesmo cálculo da tela de fechamento
-(`CashShiftService::getSummary`). A coluna `troco_devolvido` aparece separada porque o saldo
-esperado do sistema soma o dinheiro **entregue** pelo cliente sem descontar o troco — veja as
-Observações. O turno 1 é da empresa 1, então a empresa 2 recebe `Empty set`.
+e o saldo esperado na gaveta, com o mesmo cálculo da tela de fechamento de caixa. A coluna
+`troco_devolvido` aparece separada porque o saldo esperado soma o dinheiro **entregue** pelo
+cliente sem descontar o troco. O turno 1 é da empresa 1, então a empresa 2 recebe `Empty set`.
 
 ![sp_resumo_caixa](imagens/procedures/09_sp_resumo_caixa.png)
 
@@ -790,7 +770,7 @@ DELIMITER ;
 ### sp_contas_receber_cliente
 
 Parcelas em aberto (pendentes ou vencidas) do crediário de um cliente, com saldo e dias de atraso.
-Usa dois parâmetros no `WHERE` além da empresa (exercício 13). O cliente 2 não tem parcelas em
+Usa dois parâmetros no `WHERE` além da empresa. O cliente 2 não tem parcelas em
 aberto.
 
 ![sp_contas_receber_cliente](imagens/procedures/10_sp_contas_receber_cliente.png)
@@ -963,107 +943,12 @@ DELIMITER ;
 
 ---
 
-## Ambientes
-
-- **Produção (MySQL 5.7, HostGator):** as procedures são criadas pelas migrations
-  (`php artisan migrate`). Foram escritas sem recursos do MySQL 8 (sem CTE nem funções de janela),
-  para rodar na versão do servidor. Também rodam no MariaDB 10.2+.
-- **Local e testes (SQLite):** o SQLite não tem stored procedures, então as migrations não fazem
-  nada nesse banco e o sistema continua funcionando normalmente. As telas do sistema não dependem
-  das procedures.
-
-Para instalar sem SSH, pelo phpMyAdmin do cPanel: abra o banco, aba **SQL**, cole o código de uma
-procedure (o bloco "Código SQL" de cada seção, com as linhas `DELIMITER`) e execute. Para recriar
-uma procedure, rode antes `DROP PROCEDURE IF EXISTS nome;`. Para conferir:
-
-| Verificação | Comando | O que esperar |
-|---|---|---|
-| Versão do banco | `SELECT VERSION();` | MySQL 5.7+ ou MariaDB 10.2+ |
-| Permissão para criar procedures | `SHOW GRANTS;` | `ALL PRIVILEGES` ou `CREATE ROUTINE` no banco do sistema |
-| Procedures criadas | `SHOW PROCEDURE STATUS WHERE Db = DATABASE();` | As 17 procedures listadas |
-| Código de uma procedure | `SHOW CREATE PROCEDURE nome;` | O `CREATE PROCEDURE` completo |
-
-Não existe `ALTER` para o corpo de uma procedure: para mudar o código, `DROP` e `CREATE` de novo.
-Remover uma procedure não apaga nenhum dado.
-
-## Usando as procedures no Laravel
-
-Os Repositories chamam as procedures com `DB::select('CALL ...')`, sempre com *bindings* (`?`) e
-nunca interpolando valores no SQL. O `tenant_id` vem da empresa ativa (`TenantManager`), nunca de
-quem chama:
-
-```php
-use Modules\Estoque\App\Repositories\ProductProcedureRepository;
-
-$produtos = app(ProductProcedureRepository::class)->searchForPos('cabo');
-// executa: CALL sp_pdv_buscar_produto(?, ?) com [id da empresa ativa, 'cabo']
-```
-
-| Repository | Métodos |
-|---|---|
-| `ProductProcedureRepository` (Estoque) | `findById`, `searchForPos`, `byCategory`, `byPriceRange`, `listOrdered`, `belowMinimumStock`, `stockLedger`, `create`, `updateRetailPrice`, `softDelete` |
-| `SaleProcedureRepository` (Vendas) | `salesByPeriod`, `topSellingProducts`, `sellerCommissions`, `cashShiftSummary`, `openReceivables` |
-
-Um erro de `SIGNAL` chega ao Laravel como `Illuminate\Database\QueryException`, com a mensagem da
-procedure.
-
-## Testes feitos
-
-**Execução manual (exercícios 17 a 24):** todos os `CALL` dos prints acima foram executados em
-sequência, no MariaDB 11.4.5, com os dados descritos em [Dados usados nos exemplos](#dados-usados-nos-exemplos).
-
-| Situação | Resultado |
-|---|---|
-| Chamadas com valores válidos | Executaram sem erro, com os valores esperados |
-| Valor inexistente ou de outra empresa em consulta | `Empty set` (ou linha zerada nos totais), sem erro |
-| Valor inválido (faixa invertida, campo fora da lista, NCM curto, período invertido, saída maior que o saldo) | Erro `1644 (45000)` com a mensagem da procedure, sem alterar dados |
-| Alterar ou excluir produto inexistente ou de outra empresa | Erro `Produto nao encontrado nesta empresa.`, sem alterar dados |
-
-**Testes automatizados:**
-
-| Arquivo | Testes | O que cobre |
-|---|---|---|
-| `Modules/Estoque/tests/Feature/ProductProceduresTest.php` | 20 | As 10 procedures de produto, incluindo: a empresa A não enxerga produtos da empresa B; maiúsculas e minúsculas; curingas do `LIKE`; códigos consecutivos na inserção; erros de validação. |
-| `Modules/Vendas/tests/Feature/SaleProceduresTest.php` | 5 | As 5 procedures de vendas usadas pelo `SaleProcedureRepository`, com vendas feitas pelo próprio PDV; venda cancelada e de outra empresa não entram; o resumo de caixa bate com `CashShiftService`. |
-
-Os 25 testes passaram no MariaDB 11.4.5. Eles só rodam no MySQL/MariaDB; na suíte normal (SQLite)
-aparecem como *skipped*. Para rodar contra um banco local:
-
-```bash
-DB_CONNECTION=mariadb DB_HOST=127.0.0.1 DB_PORT=3306 DB_DATABASE=erp_faculdade_testing \
-DB_USERNAME=root DB_PASSWORD= php vendor/bin/phpunit \
-  Modules/Estoque/tests/Feature/ProductProceduresTest.php \
-  Modules/Vendas/tests/Feature/SaleProceduresTest.php
-```
-
-(`erp_faculdade_testing` precisa existir e é apagado e recriado a cada execução — nunca aponte
-para o banco de produção. Com MySQL, use `DB_CONNECTION=mysql`.)
-
-## Observações
-
-- **Fuso horário.** O Laravel grava datas em UTC. Por isso as procedures de produto usam
-  `UTC_TIMESTAMP()` em vez de `NOW()` (que usaria o fuso do servidor), e os filtros por data
-  comparam com datas UTC. Uma venda feita às 22h de Brasília fica registrada no dia seguinte em
-  UTC — o mesmo comportamento das telas do sistema. A exceção é `sp_ajustar_estoque`, que grava
-  com `NOW()`: no print do kardex, o ajuste feito às 21h (horário do servidor) aparece antes da
-  carga inicial gravada às 00h em UTC.
-- **Troco no caixa.** No pagamento em dinheiro o PDV grava o valor entregue pelo cliente (ex.:
-  R$ 450,00 para uma venda de R$ 420,50). O saldo esperado da gaveta, tanto na tela de fechamento
-  quanto em `sp_resumo_caixa`, soma esse valor sem descontar o troco — no exemplo, R$ 600,00 em vez
-  de R$ 570,50. A procedure mostra `troco_devolvido` à parte para deixar a diferença visível.
-- **Código interno concorrente.** `sp_inserir_produto` calcula o próximo código com `MAX(code) + 1`,
-  como o sistema. Se duas inserções na mesma empresa acontecerem no mesmo instante, a segunda falha
-  no índice único `tenant_id + code` em vez de gravar um código repetido.
-- **Exclusão pela tela x pela procedure.** O botão de excluir da tela de produtos só **desativa** o
-  produto (`is_active = 0`), que continua aparecendo nas listas de cadastro. `sp_excluir_produto`
-  faz a exclusão lógica (`deleted_at`), que tira o produto de todas as consultas.
-
 ## Conclusão
 
 Com parâmetros, cada procedure resolve uma família inteira de consultas: `sp_produtos_por_faixa_preco`
 atende qualquer faixa, em qualquer tabela de preço, de qualquer empresa, com um único código salvo
 no banco. Isso as torna **reutilizáveis** (o mesmo `CALL` serve ao phpMyAdmin, a um relatório e ao
-Laravel), **organizadas** (a regra — "só a empresa ativa", "ignora excluídos", "margem sobre o
+sistema), **organizadas** (a regra — "só a empresa ativa", "ignora excluídos", "margem sobre o
 custo" — fica escrita num lugar só) e **eficientes** (o banco guarda o código pronto e só recebe os
 valores a cada chamada). Os parâmetros tipados e a validação com `SIGNAL` também protegem os dados:
 um valor fora do esperado é recusado com uma mensagem clara antes de chegar às tabelas.
