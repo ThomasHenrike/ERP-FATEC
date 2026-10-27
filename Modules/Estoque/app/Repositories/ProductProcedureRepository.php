@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\Core\App\Services\TenantManager;
 
 /**
- * Acesso as Stored Procedures de produto (wiki/StoredProcedures.md). So' funciona no MySQL/MariaDB.
+ * Acesso as Stored Procedures de produto (wiki/Stored-Procedures.md). So' funciona no MySQL/MariaDB.
  *
  * O tenant_id vem sempre da empresa ativa - nunca de parametro do chamador - e todos os
  * valores vao como binding, nunca interpolados no SQL.
