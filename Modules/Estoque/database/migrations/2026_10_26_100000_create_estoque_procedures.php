@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Stored Procedures do modulo de Estoque (documentadas em wiki/StoredProcedures.md).
+ * Stored Procedures do modulo de Estoque (documentadas em wiki/Stored-Procedures.md).
  *
  * Regras seguidas por todas:
  * - recebem p_tenant_id e filtram por tenant_id (uma empresa nunca ve a outra);

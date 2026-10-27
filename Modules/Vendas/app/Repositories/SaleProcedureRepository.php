@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Modules\Core\App\Services\TenantManager;
 
 /**
- * Acesso as Stored Procedures de consulta de vendas (wiki/StoredProcedures.md). So' funciona no
+ * Acesso as Stored Procedures de consulta de vendas (wiki/Stored-Procedures.md). So' funciona no
  * MySQL/MariaDB. O tenant_id vem sempre da empresa ativa e os valores vao como binding.
  */
 class SaleProcedureRepository

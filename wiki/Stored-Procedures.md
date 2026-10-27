@@ -87,7 +87,7 @@ parâmetros, seria preciso uma procedure (ou uma consulta escrita à mão) para 
 
 Os prints abaixo foram tirados em 26/10/2026 no cliente de linha de comando do **MariaDB 11.4.5**,
 num banco criado do zero com `php artisan migrate --seed` (os mesmos dados de exemplo da
-[Views](Views.md)). Como o seeder não cria vendas, foram lançadas pelo próprio sistema
+[Views](Views)). Como o seeder não cria vendas, foram lançadas pelo próprio sistema
 (`SaleService`), na empresa 1, num turno de caixa aberto com R$ 200,00 de fundo de troco,
 R$ 50,00 de suprimento e R$ 100,00 de sangria:
 

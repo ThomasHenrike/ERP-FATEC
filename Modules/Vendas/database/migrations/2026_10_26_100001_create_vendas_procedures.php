@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Stored Procedures de consulta do modulo de Vendas (documentadas em wiki/StoredProcedures.md).
+ * Stored Procedures de consulta do modulo de Vendas (documentadas em wiki/Stored-Procedures.md).
  *
  * Todas sao somente leitura, recebem p_tenant_id, consideram so' vendas concluidas
  * (status = 'completed') e tratam a data final do periodo como inclusiva.

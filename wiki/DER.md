@@ -576,7 +576,7 @@ Títulos a receber (crediário / venda a prazo).
 
 ## Ver também
 
-- [Views](Views.md) — as 6 views do banco (consultas salvas para relatórios e segurança).
-- [Stored Procedures](StoredProcedures.md) — as 17 procedures com parâmetros (consulta, inserção,
+- [Views](Views) — as 6 views do banco (consultas salvas para relatórios e segurança).
+- [Stored Procedures](Stored-Procedures) — as 17 procedures com parâmetros (consulta, inserção,
   atualização, exclusão e ajuste de estoque), com o código SQL e os prints da execução.
 - [Apresentação do DER (Google Slides)](https://docs.google.com/presentation/d/1Cywp6a3Ay53cogIiCrSk2xoR6v3QujazLIj9PnQJ3sE/edit?usp=sharing)
