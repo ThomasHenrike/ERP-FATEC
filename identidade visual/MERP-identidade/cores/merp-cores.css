@@ -1,0 +1,27 @@
+/* MERP — paleta oficial */
+:root {
+  --merp-verde: #3FBF87;      /* primária */
+  --merp-grafite: #161826;    /* fundo */
+  --merp-superficie: #232532; /* cartões, painéis */
+  --merp-nevoa: #E4E7F5;      /* texto claro */
+
+  --merp-verde-100: #EAFAF2;
+  --merp-verde-200: #C9F2E0;
+  --merp-verde-300: #9FE6C7;
+  --merp-verde-400: #6FD4A9;
+  --merp-verde-500: #3FBF87;
+  --merp-verde-600: #2F9A6C;
+  --merp-verde-700: #237552;
+  --merp-verde-800: #19543B;
+  --merp-verde-900: #113526;
+
+  --merp-cinza-100: #F3F5FE;
+  --merp-cinza-200: #E4E7F5;
+  --merp-cinza-300: #CFD3E5;
+  --merp-cinza-400: #B2B6CA;
+  --merp-cinza-500: #9397AB;
+  --merp-cinza-600: #75798C;
+  --merp-cinza-700: #595D6C;
+  --merp-cinza-800: #3F424D;
+  --merp-cinza-900: #292B31;
+}
