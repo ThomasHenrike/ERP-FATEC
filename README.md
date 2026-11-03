@@ -2,12 +2,24 @@
 
 Sistema de Gestão Empresarial (ERP) modular e multi-tenant (multi-empresa), construído em Laravel. Uma única instalação atende várias empresas isoladas entre si, cada uma com seus próprios dados, configurações e usuários.
 
+## Contexto e problema
+
+O primeiro cliente do projeto é um **varejista de materiais elétricos e hidráulicos**. A empresa já usa um sistema de gestão, mas ele não atende o negócio:
+
+- **Bugs e travamentos** frequentes, inclusive no meio da venda;
+- **Instalação local, sem backup do banco de dados** — a empresa já perdeu dados por isso;
+- **Atende só parte da operação**, obrigando controles paralelos.
+
+O MERP nasce para substituir esse sistema por um ERP web, com os dados no servidor (fora do computador da loja) e módulos integrados de PDV, estoque e cadastros.
+
+**Estratégia:** primeiro atender e validar com esse cliente; depois expandir para os pequenos comércios de Itapira (cerca de 11 mil empresas, incluindo MEIs — estimativa da equipe) e da região, no modelo SaaS. A arquitetura multi-tenant já existe para essa expansão.
+
 ## Tecnologias
 
 - **PHP** 8.3+ (produção roda em 8.4)
 - **Laravel** 13
 - **nwidart/laravel-modules** — cada módulo de negócio é isolado em `Modules/{Nome}`
-- **MySQL** — banco padrão local e em produção
+- **MySQL** em produção (views e stored procedures); **SQLite** por padrão no ambiente local (`.env.example`)
 - **Blade + Alpine.js + Tailwind CSS** (via CDN, sem etapa de build obrigatória)
 - **PHPUnit** para os testes automatizados
 
@@ -74,4 +86,4 @@ código dos dois módulos continua no repositório.
 - Thiago Felipe Godoy Ribeiro
 - Matheus Felipe Rodrigues de Avelar
 - Leonardo Vilela da Silva
-- Pedro Mangutchi
+- Pedro Henrique Mangutche de Souza
