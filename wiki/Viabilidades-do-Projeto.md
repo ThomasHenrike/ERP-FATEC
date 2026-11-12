@@ -122,7 +122,7 @@ Estudo de viabilidade econômica e financeira para o desenvolvimento do software
 | **Benefícios** | Plano de saúde empresarial (R$ 600/sócio) e ajuda de custo para internet/home office (R$ 500/sócio) | R$ 5.500,00 / mês | R$ 165.000,00 |
 | **Serviços Operacionais e Legais** | Contabilidade especializada, assessoria jurídica (contratos) e conta bancária PJ | R$ 2.000,00 / mês | R$ 60.000,00 |
 | **Infraestrutura Cloud & Servidores** | AWS / Google Cloud (servidores de dev/prod, banco de dados, storage e CDN) | R$ 1.500,00 / mês | R$ 45.000,00 |
-| **Licenças de Software & Ferramentas** | GitHub Team, Figma, Jira/Notion, Google Workspace, Claude, IDEs e domínios | R$ 2.000,00 / mês | R$ 60.000,00 |
+| **Licenças de Software & Ferramentas** | GitHub Team, Figma, Jira/Notion, Google Workspace, assistentes de IA, IDEs e domínios | R$ 2.000,00 / mês | R$ 60.000,00 |
 | **Despesas de Escritório / Eventuais** | Coworking sob demanda (reuniões com cliente) + reserva para imprevistos | R$ 800,00 / mês | R$ 24.000,00 |
 | **Subtotal dos Custos Operacionais** | **Soma de todos os custos diretos e indiretos** | **R$ 63.466,67 / mês** (média) | **R$ 1.904.000,00** |
 
