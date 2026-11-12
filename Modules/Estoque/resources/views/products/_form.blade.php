@@ -135,8 +135,9 @@
                     </div>
                     <div class="w-full sm:w-56">
                         <label class="block text-[10.5px] font-extrabold text-indigo-900 uppercase">Preco de Custo Base (R$) *</label>
-                        <input type="number" step="0.01" min="0" name="cost_price" x-model.number="cost" @input="recalcAllPrices()" required
+                        <input type="text" inputmode="numeric" :value="formatMoney(cost)" @input="cost = parseMoney($event); recalcAllPrices()"
                                class="mt-0.5 block w-full rounded-lg border-indigo-300 font-bold text-gray-900 bg-indigo-50/40 text-sm py-1">
+                        <input type="hidden" name="cost_price" :value="Number(cost || 0).toFixed(2)">
                     </div>
                 </div>
 
@@ -155,8 +156,9 @@
                             </div>
                             <div>
                                 <label class="block text-[9.5px] font-bold text-indigo-900 uppercase">Preco Final *</label>
-                                <input type="number" step="0.01" min="0" name="price_retail" x-model.number="priceRetail" @input="updateMargin('retail')" required
+                                <input type="text" inputmode="numeric" :value="formatMoney(priceRetail)" @input="priceRetail = parseMoney($event); updateMargin('retail')"
                                        class="w-full rounded border-gray-300 font-bold text-indigo-600 text-xs py-1">
+                                <input type="hidden" name="price_retail" :value="Number(priceRetail || 0).toFixed(2)">
                             </div>
                         </div>
                         <p class="text-[10.5px] text-emerald-600 font-bold" x-text="'Lucro: R$ ' + getProfit('retail')"></p>
@@ -176,8 +178,9 @@
                             </div>
                             <div>
                                 <label class="block text-[9.5px] text-gray-700 uppercase">Preco Final</label>
-                                <input type="number" step="0.01" min="0" name="price_resale" x-model.number="priceResale" @input="updateMargin('resale')"
+                                <input type="text" inputmode="numeric" :value="formatMoney(priceResale)" @input="priceResale = parseMoney($event); updateMargin('resale')"
                                        class="w-full rounded border-gray-300 font-semibold text-gray-800 text-xs py-1">
+                                <input type="hidden" name="price_resale" :value="Number(priceResale || 0).toFixed(2)">
                             </div>
                         </div>
                         <p class="text-[10.5px] text-emerald-600 font-semibold" x-text="'Lucro: R$ ' + getProfit('resale')"></p>
@@ -197,8 +200,9 @@
                             </div>
                             <div>
                                 <label class="block text-[9.5px] text-gray-700 uppercase">Preco Final</label>
-                                <input type="number" step="0.01" min="0" name="price_wholesale" x-model.number="priceWholesale" @input="updateMargin('wholesale')"
+                                <input type="text" inputmode="numeric" :value="formatMoney(priceWholesale)" @input="priceWholesale = parseMoney($event); updateMargin('wholesale')"
                                        class="w-full rounded border-gray-300 font-semibold text-gray-800 text-xs py-1">
+                                <input type="hidden" name="price_wholesale" :value="Number(priceWholesale || 0).toFixed(2)">
                             </div>
                         </div>
                         <p class="text-[10.5px] text-emerald-600 font-semibold" x-text="'Lucro: R$ ' + getProfit('wholesale')"></p>
@@ -288,6 +292,18 @@
     function productMarkupCalculator(config) {
         return {
             cost: parseFloat(config.cost) || 0,
+
+            // Mascara de dinheiro (R$ 1.234,56): o campo visivel mostra o valor
+            // formatado e um input hidden envia o numero puro (12.50) ao servidor.
+            formatMoney(value) {
+                return 'R$ ' + Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            },
+            parseMoney(event) {
+                const digits = event.target.value.replace(/\D/g, '').slice(0, 12);
+                const value = parseInt(digits || '0', 10) / 100;
+                event.target.value = this.formatMoney(value);
+                return value;
+            },
             marginRetail: parseFloat(config.marginRetail) || 0,
             priceRetail: parseFloat(config.priceRetail) || 0,
             marginResale: parseFloat(config.marginResale) || 0,
