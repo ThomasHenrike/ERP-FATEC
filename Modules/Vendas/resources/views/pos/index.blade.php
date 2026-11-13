@@ -21,6 +21,10 @@
             [data-pdv-context-label] { display: none; }
             [data-pdv-pay-cols] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
+        /* Quantidade do carrinho: sem as setinhas do navegador, que escondiam o numero. */
+        [data-pdv-root] .item-qty-input::-webkit-outer-spin-button,
+        [data-pdv-root] .item-qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        [data-pdv-root] .item-qty-input { -moz-appearance: textfield; appearance: textfield; }
     </style>
     <div x-data="posEngine({{ Js::from($products) }}, {{ Js::from($customers) }}, {{ Js::from($sellers) }}, {{ Js::from($activeShift) }}, {{ (float) ($tenant->max_discount_percentage ?? 10) }}, {{ Js::from($prefillCart ?? []) }}, {{ Js::from($prefillQuoteId ?? null) }}, {{ Js::from($prefillCustomerId ?? null) }}, {{ Js::from($prefillPriceTable ?? null) }}, {{ Js::from((bool) $tenant->allow_price_edit_pos) }})"
          @keydown.window.f2.prevent="if (activeShift && !anyModalOpen()) openStockModal = true"
@@ -233,7 +237,7 @@
                                         <button type="button" @click="changeQty(index, -1)" class="w-[30px] h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 text-base font-bold">-</button>
                                         <input type="number" step="any" min="0.001" x-model.number="item.quantity" @input="updateItemTotal(index)"
                                                @keydown.enter.prevent="allowPriceEdit ? focusNextInRow($event, '.item-price-input') : focusBarcodeInput()"
-                                               class="item-qty-input w-12 h-full text-center font-bold font-mono text-sm border-x border-[#c3c8d1] focus:ring-0">
+                                               class="item-qty-input w-14 px-1 h-full text-center font-bold font-mono text-sm border-x border-[#c3c8d1] focus:ring-0">
                                         <button type="button" @click="changeQty(index, 1)" class="w-[30px] h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 text-base font-bold">+</button>
                                     </div>
                                 </div>
@@ -1232,7 +1236,7 @@
                     .then(r => r.json())
                     .then(res => {
                         if (res.success) {
-                            window.open("/vendas/caixa/comprovante/" + res.shift_id, "_blank");
+                            window.open("/vendas/caixa/comprovante/" + res.shift_id, "_blank", "noopener");
                             window.location.reload();
                         } else {
                             this.triggerToast(res.message || 'Não foi possível fechar o caixa.', 'error');
@@ -1320,7 +1324,7 @@
 
                 printReceiptOnly() {
                     if (this.completedSaleId) {
-                        window.open("/vendas/recibo/" + this.completedSaleId, "_blank");
+                        window.open("/vendas/recibo/" + this.completedSaleId, "_blank", "noopener");
                     }
                     this.emitNfModal.open = false;
                     this.resetForNextSale();
