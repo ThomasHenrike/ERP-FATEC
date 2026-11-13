@@ -33,7 +33,7 @@ class StoreProductRequest extends FormRequest
             'price_wholesale' => ['nullable', 'numeric', 'min:0'],
             'min_stock' => ['nullable', 'numeric', 'min:0'],
             'initial_stock' => ['nullable', 'numeric', 'min:0'],
-            'ncm' => ['required', 'string', 'size:8'],
+            'ncm' => ['nullable', 'digits:8'],
             'cest' => ['nullable', 'string', 'max:7'],
             'origin' => ['required', 'integer', 'between:0,8'],
             'cfop_default' => ['required', 'string', 'size:4'],

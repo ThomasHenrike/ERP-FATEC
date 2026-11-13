@@ -9,7 +9,25 @@
 })" class="space-y-4">
 
     {{-- Navegacao por 2 Abas Compactas --}}
-    <div x-data="{ activeTab: 'details' }" class="space-y-4">
+    @php
+        // Erro do servidor so' em campo da aba fiscal: abre direto nessa aba.
+        $taxFields = ['ncm', 'cest', 'origin', 'cfop_default', 'csosn', 'cst_pis', 'cst_cofins'];
+        $initialTab = ($errors->any() && collect($errors->keys())->every(fn ($k) => in_array($k, $taxFields, true))) ? 'tax' : 'details';
+    @endphp
+    {{-- Campo obrigatorio vazio numa aba escondida: o navegador cancelava o envio sem
+         mostrar nada (erro silencioso). Agora troca para a aba do campo e mostra o aviso. --}}
+    <div x-data="{ activeTab: '{{ $initialTab }}' }" class="space-y-4"
+         @invalid.capture="const tab = $event.target.closest('[data-tab]'); if (tab && activeTab !== tab.dataset.tab) { activeTab = tab.dataset.tab; $nextTick(() => $event.target.reportValidity()); }">
+        @if ($errors->any())
+            <div class="p-3 rounded-lg border border-rose-200 bg-rose-50 text-xs text-rose-700">
+                <p class="font-bold mb-1">Não foi possível salvar o produto. Corrija:</p>
+                <ul class="list-disc pl-5 space-y-0.5">
+                    @foreach ($errors->all() as $message)
+                        <li>{{ $message }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="border-b border-gray-200 bg-gray-50/50 px-4 rounded-t-xl">
             <nav class="-mb-px flex space-x-6">
                 <button type="button" 
@@ -28,7 +46,7 @@
         </div>
 
         {{-- ABA 1: Detalhes, Estoque e Precificacao Integrados (Sem Rolagem) --}}
-        <div x-show="activeTab === 'details'" class="space-y-4">
+        <div x-show="activeTab === 'details'" data-tab="details" class="space-y-4">
             
             {{-- Linha 1: Identificacao Comercial --}}
             <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
@@ -212,12 +230,13 @@
         </div>
 
         {{-- ABA 2: Informacoes Fiscais SEFAZ --}}
-        <div x-show="activeTab === 'tax'" class="pt-2 space-y-4" style="display: none;">
+        <div x-show="activeTab === 'tax'" data-tab="tax" class="pt-2 space-y-4" style="display: none;">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-700 uppercase">NCM (8 digitos) *</label>
-                    <input type="text" name="ncm" maxlength="8" value="{{ old('ncm', $product->ncm ?? '') }}" required
+                    <label class="block text-[11px] font-bold text-gray-700 uppercase">NCM (8 digitos)</label>
+                    <input type="text" name="ncm" maxlength="8" inputmode="numeric" value="{{ old('ncm', $product->ncm ?? '') }}"
                            placeholder="Ex: 84151011" class="mt-0.5 block w-full rounded-lg border-gray-300 text-xs py-1.5">
+                    <p class="text-[10px] text-gray-400 mt-0.5">Opcional. Necessário só para emitir NF-e.</p>
                     @error('ncm') <p class="text-[10px] text-rose-600 mt-0.5">{{ $message }}</p> @enderror
                 </div>
 

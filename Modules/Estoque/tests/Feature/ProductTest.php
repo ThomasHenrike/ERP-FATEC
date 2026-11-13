@@ -76,6 +76,42 @@ class ProductTest extends TestCase
         $this->assertDatabaseCount('stock_movements', 0);
     }
 
+    public function test_ncm_is_optional(): void
+    {
+        [, $manager] = $this->createTenantWithUser('44444444000191', 'manager');
+
+        $this->actingAs($manager)->post(route('estoque.produtos.store'), $this->validProductPayload(['ncm' => '']))
+            ->assertRedirect(route('estoque.produtos.index'));
+
+        $this->assertDatabaseHas('products', ['name' => 'Produto Teste', 'ncm' => null]);
+    }
+
+    public function test_ncm_when_filled_must_have_8_digits(): void
+    {
+        [, $manager] = $this->createTenantWithUser('55555555000191', 'manager');
+
+        foreach (['123', '1234567A'] as $ncm) {
+            $this->actingAs($manager)->from(route('estoque.produtos.create'))
+                ->post(route('estoque.produtos.store'), $this->validProductPayload(['ncm' => $ncm]))
+                ->assertSessionHasErrors('ncm');
+        }
+
+        $this->assertDatabaseMissing('products', ['name' => 'Produto Teste']);
+    }
+
+    public function test_form_shows_server_errors_in_a_summary_box(): void
+    {
+        [, $manager] = $this->createTenantWithUser('66666666000191', 'manager');
+
+        $this->actingAs($manager)->from(route('estoque.produtos.create'))
+            ->post(route('estoque.produtos.store'), $this->validProductPayload(['ncm' => '123']));
+
+        $this->actingAs($manager)->get(route('estoque.produtos.create'))
+            ->assertOk()
+            ->assertSee('Não foi possível salvar o produto. Corrija:')
+            ->assertSee("activeTab: 'tax'", false);
+    }
+
     public function test_sku_must_be_unique_within_the_same_tenant_only(): void
     {
         [$tenantA, $managerA] = $this->createTenantWithUser('44444444000191', 'manager');
