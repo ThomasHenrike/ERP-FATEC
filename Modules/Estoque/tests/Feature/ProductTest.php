@@ -93,7 +93,7 @@ class ProductTest extends TestCase
         foreach (['123', '1234567A'] as $ncm) {
             $this->actingAs($manager)->from(route('estoque.produtos.create'))
                 ->post(route('estoque.produtos.store'), $this->validProductPayload(['ncm' => $ncm]))
-                ->assertSessionHasErrors('ncm');
+                ->assertSessionHasErrors(['ncm' => 'O NCM deve ter exatamente 8 números (ou deixe em branco).']);
         }
 
         $this->assertDatabaseMissing('products', ['name' => 'Produto Teste']);

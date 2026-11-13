@@ -47,4 +47,11 @@ class StoreProductRequest extends FormRequest
             'is_active' => ['boolean'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'ncm.digits' => 'O NCM deve ter exatamente 8 números (ou deixe em branco).',
+        ];
+    }
 }
