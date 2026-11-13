@@ -12,11 +12,11 @@
     <style>
         /* Colunas da lista e da linha de contexto: largas no desktop, compactas
            em tablet/notebook (o tema simplificado, que cobria o toque, saiu). */
-        [data-pdv-cols] { grid-template-columns: 40px minmax(0,1fr) 110px 128px 110px 44px; }
+        [data-pdv-cols] { grid-template-columns: 40px minmax(0,1fr) 124px 128px 144px 44px; }
         [data-pdv-context] { grid-template-columns: auto minmax(96px,170px) auto minmax(120px,240px) 34px auto minmax(96px,120px); }
         [data-pdv-pay-cols] { grid-template-columns: repeat(2, calc((100% - 24px) / 3)); }
         @media (max-width: 1279px) {
-            [data-pdv-cols] { grid-template-columns: 30px minmax(0,1fr) 86px 112px 90px 34px; }
+            [data-pdv-cols] { grid-template-columns: 30px minmax(0,1fr) 100px 112px 116px 34px; }
             [data-pdv-context] { grid-template-columns: minmax(0,1fr) minmax(0,1.5fr) 34px minmax(0,0.9fr); row-gap: 6px; }
             [data-pdv-context-label] { display: none; }
             [data-pdv-pay-cols] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -229,7 +229,7 @@
                                                class="item-price-input w-full text-right font-mono font-bold text-sm border-gray-300 rounded py-1 tabular-nums">
                                     </template>
                                     <template x-if="!allowPriceEdit">
-                                        <span class="font-mono text-[14px] text-[#374151] tabular-nums" x-text="'R$ ' + formatMoney(item.unit_price)"></span>
+                                        <span class="whitespace-nowrap font-mono text-[12px] xl:text-[14px] text-[#374151] tabular-nums" x-text="'R$ ' + formatMoney(item.unit_price)"></span>
                                     </template>
                                 </div>
                                 <div class="px-3 flex items-center justify-center">
@@ -241,7 +241,7 @@
                                         <button type="button" @click="changeQty(index, 1)" class="w-[30px] h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 text-base font-bold">+</button>
                                     </div>
                                 </div>
-                                <div class="px-3 text-right font-mono font-extrabold text-[15px] text-[#047857] tabular-nums" x-text="'R$ ' + formatMoney(item.total_price)"></div>
+                                <div class="px-2 text-right whitespace-nowrap font-mono font-extrabold text-[13px] xl:text-[15px] text-[#047857] tabular-nums" x-text="'R$ ' + formatMoney(item.total_price)"></div>
                                 <div class="flex items-center justify-center">
                                     <button type="button" @click="removeItem(index)" class="w-[30px] h-[30px] inline-flex items-center justify-center text-[#be123c] hover:bg-[#ffe4e6] rounded font-bold text-lg">&times;</button>
                                 </div>
