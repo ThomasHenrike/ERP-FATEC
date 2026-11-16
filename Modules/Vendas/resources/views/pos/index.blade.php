@@ -236,7 +236,8 @@
                                     <div class="inline-flex items-center border border-[#9aa1ad] rounded-lg h-[30px]">
                                         <button type="button" @click="changeQty(index, -1)" class="w-[30px] h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 text-base font-bold">-</button>
                                         <input type="number" step="any" min="0.001" x-model.number="item.quantity" @input="updateItemTotal(index)"
-                                               @keydown.enter.prevent="allowPriceEdit ? focusNextInRow($event, '.item-price-input') : focusBarcodeInput()"
+                                               @focus="qtyBeforeEdit = item.quantity"
+                                               @keydown.enter.prevent="onQtyEnter($event, index)"
                                                class="item-qty-input w-14 px-1 h-full text-center font-bold font-mono text-sm border-x border-[#c3c8d1] focus:ring-0">
                                         <button type="button" @click="changeQty(index, 1)" class="w-[30px] h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 text-base font-bold">+</button>
                                     </div>
@@ -698,6 +699,8 @@
                 sellers: sellers || [],
                 activeShift: activeShift || null,
                 allowPriceEdit: !!allowPriceEdit,
+                qtyBeforeEdit: 1,
+                printBehavior: {{ Js::from($tenant->print_behavior ?? 'ask') }},
                 cart: prefillCart || [],
                 quoteId: quoteId || null,
                 searchQuery: '',
@@ -765,6 +768,17 @@
                     // (nao via @keydown.window no template) porque precisam ler o
                     // foco atual do documento a cada tecla.
                     window.addEventListener('keydown', (event) => this.handlePaymentStepKeydown(event));
+
+                    // Leitor de codigo de barras com o cursor fora de qualquer campo (ex.: depois
+                    // de clicar na tela): manda a digitacao para o campo de busca do carrinho.
+                    window.addEventListener('keydown', (event) => {
+                        if (this.currentStep !== 'carrinho' || !this.activeShift || this.anyModalOpen()) return;
+                        if (event.key.length !== 1 || event.ctrlKey || event.altKey || event.metaKey) return;
+                        let active = document.activeElement;
+                        if (active && ['INPUT', 'SELECT', 'TEXTAREA'].includes(active.tagName)) return;
+                        let input = this.$refs.barcodeInput;
+                        if (input) { input.removeAttribute('readonly'); input.focus(); }
+                    });
                 },
 
                 anyModalOpen() {
@@ -928,14 +942,17 @@
                     );
 
                     if (found) {
-                        this.addProductToCartWithQty(found, qty);
+                        // Busca direta (leitor ou codigo digitado): o cursor fica no campo de
+                        // busca, pronto para a proxima leitura. Antes ia para a Quantidade e a
+                        // leitura seguinte virava a quantidade do item anterior.
+                        this.addProductToCartWithQty(found, qty, false);
                         this.searchQuery = '';
                     } else {
                         this.triggerToast('Produto não localizado por código simples, SKU ou código de barras.', 'warning');
                     }
                 },
 
-                addProductToCartWithQty(product, qty) {
+                addProductToCartWithQty(product, qty, focusQty = true) {
                     let existingIndex = this.cart.findIndex(i => i.product_id === product.id);
                     let price = this.getItemPrice(product);
                     let rowIndex;
@@ -962,11 +979,40 @@
 
                     // Fluxo de teclado: apos escanear/adicionar, foca a Quantidade
                     // do item (novo ou existente) pra permitir ajustar na hora.
+                    if (!focusQty) {
+                        this.focusBarcodeInput();
+                        return;
+                    }
                     this.$nextTick(() => {
                         let root = document.querySelector('[data-pdv-root]');
                         let target = root ? root.querySelectorAll('.item-qty-input')[rowIndex] : null;
                         if (target) { target.focus(); target.select(); }
                     });
+                },
+
+                // Enter na Quantidade. Se o que chegou ali foi um codigo de barras (leitura com o
+                // cursor na quantidade), devolve a quantidade anterior e adiciona o produto lido.
+                onQtyEnter(event, index) {
+                    let item = this.cart[index];
+                    let raw = String(event.target.value || '').trim();
+                    let previous = String(this.qtyBeforeEdit ?? '');
+                    let candidates = [raw];
+                    if (previous && raw.startsWith(previous)) candidates.push(raw.slice(previous.length));
+                    // 8+ digitos nunca e' quantidade de verdade: trata como leitura (achou ou nao).
+                    let isCode = (c) => /^\d{8,14}$/.test(c);
+                    let code = candidates.find(c => isCode(c) && this.catalog.some(p => p.barcode && p.barcode.trim() === c)) || candidates.find(isCode);
+                    if (code && item) {
+                        item.quantity = parseFloat(this.qtyBeforeEdit) || 1;
+                        this.updateItemTotal(index);
+                        this.searchQuery = code;
+                        this.handleDirectSearch();
+                        return;
+                    }
+                    if (this.allowPriceEdit) {
+                        this.focusNextInRow(event, '.item-price-input');
+                    } else {
+                        this.focusBarcodeInput();
+                    }
                 },
 
                 focusNextInRow(event, selector) {
@@ -1312,6 +1358,12 @@
                             this.completedReceived = res.amount_received;
                             this.completedChange = res.change;
                             this.emitNfModal = { open: true, stage: 'choose', saleId: res.sale_id, number: null, danfeUrl: null, message: '', reviewUrl: null };
+                            // Configuracoes > "Imprimir automaticamente ao concluir a venda": imprime
+                            // na hora e mantem o resumo (com o troco) na tela ate o operador continuar.
+                            if (this.printBehavior === 'auto') {
+                                window.erpPrint("/vendas/recibo/" + res.sale_id);
+                                this.triggerToast('Comprovante enviado para impressão.', 'success');
+                            }
                         } else {
                             this.triggerToast(res.message || 'Erro ao processar venda.', 'error');
                         }
@@ -1324,7 +1376,7 @@
 
                 printReceiptOnly() {
                     if (this.completedSaleId) {
-                        window.open("/vendas/recibo/" + this.completedSaleId, "_blank", "noopener");
+                        window.erpPrint("/vendas/recibo/" + this.completedSaleId);
                     }
                     this.emitNfModal.open = false;
                     this.resetForNextSale();
