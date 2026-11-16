@@ -53,6 +53,7 @@ class TenantSettingsController extends Controller
             // Impressao
             'print_format' => ['required', 'string', 'in:a4,thermal_80,thermal_58'],
             'print_behavior' => ['required', 'string', 'in:ask,auto,none'],
+            'quick_print' => ['boolean'],
             'receipt_footer' => ['nullable', 'string', 'max:500'],
 
             // Fiscal
@@ -128,6 +129,7 @@ class TenantSettingsController extends Controller
         }
 
         $validated['allow_price_edit_pos'] = $request->boolean('allow_price_edit_pos');
+        $validated['quick_print'] = $request->boolean('quick_print');
 
         $tenant->update($validated);
 

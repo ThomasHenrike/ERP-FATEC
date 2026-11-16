@@ -182,7 +182,22 @@ class PosController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'document' => ['nullable', 'string', 'max:20'],
+            'document' => ['nullable', 'string', 'max:20', function (string $attribute, mixed $value, \Closure $fail) {
+                $digits = preg_replace('/\D/', '', (string) $value);
+                if ($digits === '') {
+                    return;
+                }
+                if (strlen($digits) === 11 ? !self::isValidCpf($digits) : (strlen($digits) === 14 ? !self::isValidCnpj($digits) : true)) {
+                    $fail(strlen($digits) === 14 ? 'CNPJ inválido: confira os dígitos.' : 'CPF inválido: confira os dígitos.');
+                    return;
+                }
+                // Trava anti-duplicacao: compara so' os digitos (com ou sem mascara).
+                $exists = Customer::whereNotNull('document')->pluck('document')
+                    ->contains(fn ($doc) => preg_replace('/\D/', '', (string) $doc) === $digits);
+                if ($exists) {
+                    $fail('Já existe um cliente cadastrado com este CPF/CNPJ.');
+                }
+            }],
             'phone' => ['nullable', 'string', 'max:20'],
             'credit_limit' => ['nullable', 'numeric', 'min:0'],
         ]);
@@ -197,6 +212,48 @@ class PosController extends Controller
             'success' => true,
             'customer' => $customer,
         ]);
+    }
+
+    /** Digitos verificadores do CPF (11 digitos, sem mascara). */
+    private static function isValidCpf(string $cpf): bool
+    {
+        if (strlen($cpf) !== 11 || preg_match('/^(\d)\1{10}$/', $cpf)) {
+            return false;
+        }
+        for ($t = 9; $t < 11; $t++) {
+            $sum = 0;
+            for ($i = 0; $i < $t; $i++) {
+                $sum += (int) $cpf[$i] * ($t + 1 - $i);
+            }
+            if ((($sum * 10) % 11) % 10 !== (int) $cpf[$t]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** Digitos verificadores do CNPJ (14 digitos, sem mascara). */
+    private static function isValidCnpj(string $cnpj): bool
+    {
+        if (strlen($cnpj) !== 14 || preg_match('/^(\d)\1{13}$/', $cnpj)) {
+            return false;
+        }
+        $calc = function (int $len) use ($cnpj): int {
+            $sum = 0;
+            $pos = $len - 7;
+            for ($i = 0; $i < $len; $i++) {
+                $sum += (int) $cnpj[$i] * $pos--;
+                if ($pos < 2) {
+                    $pos = 9;
+                }
+            }
+            $r = $sum % 11;
+
+            return $r < 2 ? 0 : 11 - $r;
+        };
+
+        return $calc(12) === (int) $cnpj[12] && $calc(13) === (int) $cnpj[13];
     }
 
     public function receipt(Request $request, Sale $sale): View
