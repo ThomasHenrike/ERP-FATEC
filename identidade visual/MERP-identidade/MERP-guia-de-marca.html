@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // text from that direct parent; requests from below are honored only
     // for the document's own child frames, and the ROOT never sends
     // upward at all. That last rule is load-bearing: the artifact host's
-    // frame-ancestors allows claude.ai (and friends) to frame an
+    // frame-ancestors allows external hosts to frame an
     // artifact, so window.top can be a FOREIGN document — a top-addressed
     // protocol would hand page uuids to that ancestor and accept forged
     // "page text" from it, minting attacker HTML as an artifact-origin
