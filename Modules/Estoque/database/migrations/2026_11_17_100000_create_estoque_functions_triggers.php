@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Schema;
  * - trg_produto_historico_preco: toda vez que custo ou algum preco de venda muda, grava o valor
  *   antigo e o novo em product_price_history.
  *
+ * Horario: NOW() na sessao do MySQL, que o Laravel abre no mesmo fuso do sistema
+ * (config/database.php 'timezone' = -03:00, horario de Brasilia).
+ *
  * A trigger so' REGISTRA (insere numa tabela propria); nunca bloqueia nem altera o produto,
  * para nao interferir no cadastro nem nas vendas. A tabela existe em qualquer banco; a function
  * e a trigger so' sao criadas no MySQL/MariaDB (o SQLite dos testes nao tem esses recursos).

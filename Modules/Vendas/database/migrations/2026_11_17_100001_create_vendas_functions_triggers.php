@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Schema;
  * - trg_venda_cancelada_log: quando uma venda passa para "canceled", grava um registro em
  *   sale_cancellation_logs (codigo, valor, motivo e quando).
  *
+ * Horario: NOW() na sessao do MySQL, no mesmo fuso do sistema (horario de Brasilia).
+ *
  * A trigger so' REGISTRA; nunca bloqueia nem altera a venda. A tabela existe em qualquer banco;
  * a function e a trigger so' sao criadas no MySQL/MariaDB.
  */

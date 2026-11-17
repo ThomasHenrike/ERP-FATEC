@@ -99,6 +99,10 @@ class ProductFunctionsTriggersTest extends TestCase
             'old_price_retail' => 15.00,
             'new_price_retail' => 18.00,
         ]);
+
+        // Horario em UTC, igual ao resto do sistema (e nao o horario local do MySQL)
+        $changedAt = DB::table('product_price_history')->value('changed_at');
+        $this->assertLessThan(120, abs(\Illuminate\Support\Carbon::parse($changedAt)->diffInSeconds(now())));
     }
 
     public function test_changes_that_are_not_prices_do_not_write_history(): void

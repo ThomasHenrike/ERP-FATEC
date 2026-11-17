@@ -137,6 +137,10 @@ class SaleFunctionsTriggersTest extends TestCase
             'cancel_reason' => 'Produto com defeito',
         ]);
 
+        // Horario em UTC, igual ao canceled_at gravado pelo sistema (e nao o horario local do MySQL)
+        $log = DB::table('sale_cancellation_logs')->first();
+        $this->assertLessThan(120, abs(\Illuminate\Support\Carbon::parse($log->logged_at)->diffInSeconds(now())));
+
         // Mexer de novo numa venda ja' cancelada nao duplica o registro
         Sale::withoutGlobalScopes()->whereKey($sale->id)->update(['notes' => 'observacao depois do cancelamento']);
         $this->assertDatabaseCount('sale_cancellation_logs', 1);
