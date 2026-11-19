@@ -9,25 +9,7 @@
 })" class="space-y-4">
 
     {{-- Navegacao por 2 Abas Compactas --}}
-    @php
-        // Erro do servidor so' em campo da aba fiscal: abre direto nessa aba.
-        $taxFields = ['ncm', 'cest', 'origin', 'cfop_default', 'csosn', 'cst_pis', 'cst_cofins'];
-        $initialTab = ($errors->any() && collect($errors->keys())->every(fn ($k) => in_array($k, $taxFields, true))) ? 'tax' : 'details';
-    @endphp
-    {{-- Campo obrigatorio vazio numa aba escondida: o navegador cancelava o envio sem
-         mostrar nada (erro silencioso). Agora troca para a aba do campo e mostra o aviso. --}}
-    <div x-data="{ activeTab: '{{ $initialTab }}' }" class="space-y-4"
-         @invalid.capture="const tab = $event.target.closest('[data-tab]'); if (tab && activeTab !== tab.dataset.tab) { activeTab = tab.dataset.tab; $nextTick(() => $event.target.reportValidity()); }">
-        @if ($errors->any())
-            <div class="p-3 rounded-lg border border-rose-200 bg-rose-50 text-xs text-rose-700">
-                <p class="font-bold mb-1">Não foi possível salvar o produto. Corrija:</p>
-                <ul class="list-disc pl-5 space-y-0.5">
-                    @foreach ($errors->all() as $message)
-                        <li>{{ $message }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <div x-data="{ activeTab: 'details' }" class="space-y-4">
         <div class="border-b border-gray-200 bg-gray-50/50 px-4 rounded-t-xl">
             <nav class="-mb-px flex space-x-6">
                 <button type="button" 
@@ -46,7 +28,7 @@
         </div>
 
         {{-- ABA 1: Detalhes, Estoque e Precificacao Integrados (Sem Rolagem) --}}
-        <div x-show="activeTab === 'details'" data-tab="details" class="space-y-4">
+        <div x-show="activeTab === 'details'" class="space-y-4">
             
             {{-- Linha 1: Identificacao Comercial --}}
             <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
@@ -153,9 +135,8 @@
                     </div>
                     <div class="w-full sm:w-56">
                         <label class="block text-[10.5px] font-extrabold text-indigo-900 uppercase">Preco de Custo Base (R$) *</label>
-                        <input type="text" inputmode="numeric" :value="formatMoney(cost)" @input="cost = parseMoney($event); recalcAllPrices()"
+                        <input type="number" step="0.01" min="0" name="cost_price" x-model.number="cost" @input="recalcAllPrices()" required
                                class="mt-0.5 block w-full rounded-lg border-indigo-300 font-bold text-gray-900 bg-indigo-50/40 text-sm py-1">
-                        <input type="hidden" name="cost_price" :value="Number(cost || 0).toFixed(2)">
                     </div>
                 </div>
 
@@ -174,9 +155,8 @@
                             </div>
                             <div>
                                 <label class="block text-[9.5px] font-bold text-indigo-900 uppercase">Preco Final *</label>
-                                <input type="text" inputmode="numeric" :value="formatMoney(priceRetail)" @input="priceRetail = parseMoney($event); updateMargin('retail')"
+                                <input type="number" step="0.01" min="0" name="price_retail" x-model.number="priceRetail" @input="updateMargin('retail')" required
                                        class="w-full rounded border-gray-300 font-bold text-indigo-600 text-xs py-1">
-                                <input type="hidden" name="price_retail" :value="Number(priceRetail || 0).toFixed(2)">
                             </div>
                         </div>
                         <p class="text-[10.5px] text-emerald-600 font-bold" x-text="'Lucro: R$ ' + getProfit('retail')"></p>
@@ -196,9 +176,8 @@
                             </div>
                             <div>
                                 <label class="block text-[9.5px] text-gray-700 uppercase">Preco Final</label>
-                                <input type="text" inputmode="numeric" :value="formatMoney(priceResale)" @input="priceResale = parseMoney($event); updateMargin('resale')"
+                                <input type="number" step="0.01" min="0" name="price_resale" x-model.number="priceResale" @input="updateMargin('resale')"
                                        class="w-full rounded border-gray-300 font-semibold text-gray-800 text-xs py-1">
-                                <input type="hidden" name="price_resale" :value="Number(priceResale || 0).toFixed(2)">
                             </div>
                         </div>
                         <p class="text-[10.5px] text-emerald-600 font-semibold" x-text="'Lucro: R$ ' + getProfit('resale')"></p>
@@ -218,9 +197,8 @@
                             </div>
                             <div>
                                 <label class="block text-[9.5px] text-gray-700 uppercase">Preco Final</label>
-                                <input type="text" inputmode="numeric" :value="formatMoney(priceWholesale)" @input="priceWholesale = parseMoney($event); updateMargin('wholesale')"
+                                <input type="number" step="0.01" min="0" name="price_wholesale" x-model.number="priceWholesale" @input="updateMargin('wholesale')"
                                        class="w-full rounded border-gray-300 font-semibold text-gray-800 text-xs py-1">
-                                <input type="hidden" name="price_wholesale" :value="Number(priceWholesale || 0).toFixed(2)">
                             </div>
                         </div>
                         <p class="text-[10.5px] text-emerald-600 font-semibold" x-text="'Lucro: R$ ' + getProfit('wholesale')"></p>
@@ -230,13 +208,12 @@
         </div>
 
         {{-- ABA 2: Informacoes Fiscais SEFAZ --}}
-        <div x-show="activeTab === 'tax'" data-tab="tax" class="pt-2 space-y-4" style="display: none;">
+        <div x-show="activeTab === 'tax'" class="pt-2 space-y-4" style="display: none;">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-700 uppercase">NCM (8 digitos)</label>
-                    <input type="text" name="ncm" maxlength="8" inputmode="numeric" value="{{ old('ncm', $product->ncm ?? '') }}"
+                    <label class="block text-[11px] font-bold text-gray-700 uppercase">NCM (8 digitos) *</label>
+                    <input type="text" name="ncm" maxlength="8" value="{{ old('ncm', $product->ncm ?? '') }}" required
                            placeholder="Ex: 84151011" class="mt-0.5 block w-full rounded-lg border-gray-300 text-xs py-1.5">
-                    <p class="text-[10px] text-gray-400 mt-0.5">Opcional. Necessário só para emitir NF-e.</p>
                     @error('ncm') <p class="text-[10px] text-rose-600 mt-0.5">{{ $message }}</p> @enderror
                 </div>
 
@@ -311,18 +288,6 @@
     function productMarkupCalculator(config) {
         return {
             cost: parseFloat(config.cost) || 0,
-
-            // Mascara de dinheiro (R$ 1.234,56): o campo visivel mostra o valor
-            // formatado e um input hidden envia o numero puro (12.50) ao servidor.
-            formatMoney(value) {
-                return 'R$ ' + Number(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            },
-            parseMoney(event) {
-                const digits = event.target.value.replace(/\D/g, '').slice(0, 12);
-                const value = parseInt(digits || '0', 10) / 100;
-                event.target.value = this.formatMoney(value);
-                return value;
-            },
             marginRetail: parseFloat(config.marginRetail) || 0,
             priceRetail: parseFloat(config.priceRetail) || 0,
             marginResale: parseFloat(config.marginResale) || 0,

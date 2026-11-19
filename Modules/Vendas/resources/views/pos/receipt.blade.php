@@ -115,10 +115,11 @@
 
     <script>
         function handleReturnToPos() {
-            // Aberta pelo PDV (com noopener, sem window.opener): tenta fechar a aba;
-            // se o navegador nao deixar, volta para o PDV nesta mesma aba.
-            window.close();
-            setTimeout(function () { window.location.href = "{{ route('vendas.pos.index') }}"; }, 300);
+            if (window.opener && !window.opener.closed) {
+                window.close();
+            } else {
+                window.location.href = "{{ route('vendas.pos.index') }}";
+            }
         }
     </script>
 </body>

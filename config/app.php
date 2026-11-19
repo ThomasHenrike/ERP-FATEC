@@ -65,8 +65,7 @@ return [
     |
     */
 
-    // Horario de Brasilia: telas, recibos, caixa e relatorios por dia usam a hora local.
-    'timezone' => env('APP_TIMEZONE', 'America/Sao_Paulo'),
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------

@@ -196,7 +196,7 @@
                                     Perguntar sempre: "Deseja imprimir comprovante?"
                                 </option>
                                 <option value="auto" @selected(old('print_behavior', $tenant->print_behavior) === 'auto')>
-                                    Imprimir automaticamente ao concluir a venda
+                                    Imprimir automaticamente sem perguntar
                                 </option>
                                 <option value="none" @selected(old('print_behavior', $tenant->print_behavior) === 'none')>
                                     Nao imprimir (Concluir e limpar caixa na tela)
@@ -208,24 +208,6 @@
                                 <textarea name="receipt_footer" rows="2" placeholder="Ex: Garantia de 90 dias com apresentacao deste cupom. Agradecemos a preferencia!"
                                           class="mt-1 block w-full rounded-lg border-gray-300 text-xs">{{ old('receipt_footer', $tenant->receipt_footer) }}</textarea>
                             </div>
-                        </div>
-
-                        <div class="p-5 bg-white rounded-xl border border-gray-200 shadow-sm space-y-2">
-                            <label class="flex items-start gap-3 cursor-pointer">
-                                <input type="checkbox" name="quick_print" value="1" @checked(old('quick_print', $tenant->quick_print)) class="mt-1 rounded border-gray-300">
-                                <span>
-                                    <span class="block text-sm font-bold text-gray-900">Impressão rápida</span>
-                                    <span class="block text-xs text-gray-500">
-                                        O comprovante é enviado para a impressora na própria tela do PDV, sem abrir outra aba.
-                                        Desligado, o comprovante abre em outra aba com a tela de impressão do navegador.
-                                    </span>
-                                    <span class="block text-[11px] text-amber-700 mt-1">
-                                        Para sair sem nenhuma janela de confirmação, o Chrome do computador do caixa precisa abrir com a opção
-                                        <code class="font-mono">--kiosk-printing</code> (no atalho do Chrome, campo "Destino") e a impressora térmica
-                                        precisa ser a padrão do Windows. Sem isso, a janela de impressão ainda aparece, mas já com o comprovante pronto.
-                                    </span>
-                                </span>
-                            </label>
                         </div>
                     </div>
                 </div>
