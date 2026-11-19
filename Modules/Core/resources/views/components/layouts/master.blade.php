@@ -354,5 +354,30 @@
             MERP v1.0 &bull; Ambiente {{ config('app.env') === 'production' ? 'Producao' : 'Local' }}
         </div>
     </footer>
+
+    <script>
+        // Impressao rapida (Configuracoes > Impressao): imprime na propria tela por um iframe
+        // oculto em vez de abrir aba nova. Desligada, abre o comprovante em outra aba (noopener,
+        // para o window.print() da aba nova nao congelar a tela que a abriu). Nunca falha em
+        // silencio: qualquer erro cai na aba nova, que mostra a resposta real do servidor.
+        window.ERP_QUICK_PRINT = @json((bool) ($tenantAtual->quick_print ?? false));
+        window.erpPrint = async function (url) {
+            if (!window.ERP_QUICK_PRINT) { window.open(url, '_blank', 'noopener'); return; }
+
+            const frame = document.createElement('iframe');
+            frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;';
+            try {
+                const res = await fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'text/html' } });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                // O proprio comprovante ja chama window.print() no onload.
+                frame.srcdoc = await res.text();
+                document.body.appendChild(frame);
+                setTimeout(() => frame.remove(), 120000);
+            } catch (e) {
+                frame.remove();
+                window.open(url, '_blank', 'noopener');
+            }
+        };
+    </script>
 </body>
 </html>

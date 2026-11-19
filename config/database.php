@@ -59,6 +59,10 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // Mesmo fuso do sistema na sessao do MySQL: NOW() em triggers/procedures bate com a
+            // hora gravada pelo Laravel em qualquer servidor (offset, pois o MySQL da hospedagem
+            // pode nao ter as tabelas de fuso com nome carregadas).
+            'timezone' => env('DB_TIMEZONE', '-03:00'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
@@ -79,6 +83,10 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // Mesmo fuso do sistema na sessao do MySQL: NOW() em triggers/procedures bate com a
+            // hora gravada pelo Laravel em qualquer servidor (offset, pois o MySQL da hospedagem
+            // pode nao ter as tabelas de fuso com nome carregadas).
+            'timezone' => env('DB_TIMEZONE', '-03:00'),
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],

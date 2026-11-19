@@ -1,0 +1,592 @@
+<title>DER ERP-FATEC</title>
+<style>
+  :root {
+    --bg: #f5f6f9;
+    --surface: #ffffff;
+    --surface-2: #eef0f5;
+    --ink: #1a1d27;
+    --muted: #5b6274;
+    --border: #dde1ea;
+    --accent: #3452d9;
+    --accent-soft: #e8ebfc;
+    --mono-tint: #f0f2f8;
+    --diagram-bg: #fbfcfe;
+    --diagram-grid: #e4e8f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11141c;
+      --surface: #181c27;
+      --surface-2: #1f2431;
+      --ink: #e7e9f2;
+      --muted: #9aa1b5;
+      --border: #2b3040;
+      --accent: #8fa1ff;
+      --accent-soft: #232a47;
+      --mono-tint: #1c2130;
+      --diagram-bg: #141824;
+      --diagram-grid: #232838;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11141c;
+    --surface: #181c27;
+    --surface-2: #1f2431;
+    --ink: #e7e9f2;
+    --muted: #9aa1b5;
+    --border: #2b3040;
+    --accent: #8fa1ff;
+    --accent-soft: #232a47;
+    --mono-tint: #1c2130;
+    --diagram-bg: #141824;
+    --diagram-grid: #232838;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    margin: 0;
+    padding: 0 20px;
+    padding-block: 40px 64px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; }
+
+  code, .mono, .cardinality, .entity-name { font-family: "IBM Plex Mono", ui-monospace, monospace; }
+
+  header.page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  header.page-head .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  header.page-head h1 {
+    font-size: clamp(26px, 4vw, 36px);
+    margin: 0;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  header.page-head p {
+    margin: 8px 0 0;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+  .meta-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-grid div { text-align: right; }
+  .meta-grid .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .meta-grid .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  section { margin-bottom: 40px; }
+  h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .legend-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .legend-item .cardinality {
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .legend-item span.desc { color: var(--muted); }
+
+  .diagram-panel {
+    background: var(--diagram-bg);
+    background-image:
+      linear-gradient(var(--diagram-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--diagram-grid) 1px, transparent 1px);
+    background-size: 28px 28px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    overflow-x: auto;
+  }
+  .diagram-panel pre.mermaid { margin: 0; min-width: 1400px; }
+
+  .modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .module-card .mod-name {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .module-card ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .module-card li {
+    font-size: 13.5px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 6px;
+  }
+  .module-card li:last-child { border-bottom: none; padding-bottom: 0; }
+  .module-card li .ent { font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+  .module-card li .purpose { color: var(--muted); text-align: right; }
+
+  .notes {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .notes ul { margin: 8px 0 0; padding-left: 20px; }
+  .notes li { margin-bottom: 8px; font-size: 14px; }
+  .notes li:last-child { margin-bottom: 0; }
+  .notes .tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 1px 7px;
+    border-radius: 5px;
+    margin-right: 6px;
+  }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 12.5px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .meta-grid { width: 100%; justify-content: space-between; }
+    .meta-grid div { text-align: left; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="page-head">
+    <div>
+      <div class="eyebrow">Modelagem de dados &middot; retrospectiva</div>
+      <h1>DER — ERP-FATEC</h1>
+      <p>Versão anterior do sistema (repositório <code>ThomasHenrike/ERP-FATEC</code>) — recorte dos módulos Core, Cadastros, Estoque e Vendas.</p>
+    </div>
+    <div class="meta-grid">
+      <div><div class="num">17</div><div class="label">Entidades</div></div>
+      <div><div class="num">4</div><div class="label">Módulos</div></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Notação</h2>
+    <div class="legend">
+      <div class="legend-item"><span class="cardinality">||--o{</span><span class="desc">um para muitos</span></div>
+      <div class="legend-item"><span class="cardinality">|o--o{</span><span class="desc">zero-ou-um para muitos (FK opcional)</span></div>
+      <div class="legend-item"><span class="cardinality">|o--o|</span><span class="desc">zero-ou-um para zero-ou-um</span></div>
+      <div class="legend-item"><span class="cardinality">PK / FK</span><span class="desc">chave primária / chave estrangeira</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Diagrama</h2>
+    <div class="diagram-panel">
+<pre class="mermaid">
+erDiagram
+    TENANTS ||--o{ TENANT_USER : possui
+    USERS ||--o{ TENANT_USER : vincula
+    TENANTS ||--o{ TENANT_MODULES : configura
+    TENANTS ||--o{ EMPLOYEES : emprega
+    USERS |o--o| EMPLOYEES : "é (opcional)"
+    TENANTS ||--o{ SUPPLIERS : cadastra
+    TENANTS ||--o{ CATEGORIES : organiza
+    CATEGORIES |o--o{ CATEGORIES : "subcategoria de"
+    TENANTS ||--o{ PRODUCTS : possui
+    CATEGORIES |o--o{ PRODUCTS : classifica
+    SUPPLIERS |o--o{ PRODUCTS : fornece
+    TENANTS ||--o{ STOCK_MOVEMENTS : registra
+    PRODUCTS ||--o{ STOCK_MOVEMENTS : movimenta
+    USERS |o--o{ STOCK_MOVEMENTS : realiza
+    TENANTS ||--o{ SUPPLIER_PRODUCTS : mapeia
+    PRODUCTS ||--o{ SUPPLIER_PRODUCTS : corresponde
+    TENANTS ||--o{ CUSTOMERS : cadastra
+    TENANTS ||--o{ SALES : realiza
+    USERS ||--o{ SALES : opera
+    EMPLOYEES |o--o{ SALES : vende
+    CASH_SHIFTS |o--o{ SALES : "ocorre em"
+    CUSTOMERS |o--o{ SALES : compra
+    SALES ||--o{ SALE_ITEMS : contem
+    PRODUCTS ||--o{ SALE_ITEMS : "e vendido em"
+    SALES ||--o{ SALE_PAYMENTS : "e pago por"
+    TENANTS ||--o{ CASH_SHIFTS : abre
+    USERS ||--o{ CASH_SHIFTS : opera
+    CASH_SHIFTS ||--o{ CASH_MOVEMENTS : registra
+    USERS ||--o{ CASH_MOVEMENTS : autoriza
+    TENANTS ||--o{ CUSTOMER_RECEIVABLES : controla
+    CUSTOMERS ||--o{ CUSTOMER_RECEIVABLES : deve
+    SALES ||--o{ CUSTOMER_RECEIVABLES : gera
+
+    TENANTS {
+        bigint id PK
+        uuid uuid UK
+        string name
+        string trade_name
+        string document UK
+        string state_registration
+        string email
+        string phone
+        string street
+        string city
+        string state
+        string ibge_city_code
+        string logo_path
+        string primary_color
+        boolean is_active
+        tinyint crt
+        string sefaz_environment
+        decimal max_discount_percentage
+        tinyint billing_due_day
+        decimal billing_amount
+        int max_users
+        text "... +25 campos de config"
+    }
+
+    USERS {
+        bigint id PK
+        string name
+        string email UK
+        timestamp email_verified_at
+        string password
+    }
+
+    TENANT_USER {
+        bigint id PK
+        bigint tenant_id FK
+        bigint user_id FK
+        string role
+        boolean is_active
+    }
+
+    TENANT_MODULES {
+        bigint id PK
+        bigint tenant_id FK
+        string module
+        boolean is_enabled
+    }
+
+    EMPLOYEES {
+        bigint id PK
+        bigint tenant_id FK
+        bigint user_id FK
+        string name
+        string document
+        string role
+        decimal commission_percentage
+        date hire_date
+        boolean is_active
+    }
+
+    SUPPLIERS {
+        bigint id PK
+        bigint tenant_id FK
+        string name
+        string trade_name
+        string document
+        string contact_name
+        string city
+        string state
+        boolean is_active
+    }
+
+    CATEGORIES {
+        bigint id PK
+        bigint tenant_id FK
+        bigint parent_id FK
+        string name
+        string slug
+        boolean is_active
+    }
+
+    PRODUCTS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint category_id FK
+        bigint supplier_id FK
+        bigint code
+        string name
+        string brand
+        string sku
+        string barcode
+        string unit
+        decimal cost_price
+        decimal price_retail
+        decimal price_resale
+        decimal price_wholesale
+        decimal min_stock
+        decimal current_stock
+        string location
+        int warranty_months
+        string ncm
+        string cfop_default
+        string csosn
+        decimal icms_rate
+        boolean is_active
+    }
+
+    STOCK_MOVEMENTS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint product_id FK
+        bigint user_id FK
+        string type
+        decimal quantity
+        decimal unit_price
+        decimal previous_stock
+        decimal current_stock
+        string reference_type
+        bigint reference_id
+    }
+
+    SUPPLIER_PRODUCTS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint product_id FK
+        string supplier_cnpj
+        string supplier_product_code
+    }
+
+    CUSTOMERS {
+        bigint id PK
+        bigint tenant_id FK
+        string name
+        string trade_name
+        string person_type
+        string document
+        string email
+        string phone
+        decimal credit_limit
+        string default_price_table
+        string city
+        string state
+        string ibge_city_code
+        boolean is_active
+    }
+
+    SALES {
+        bigint id PK
+        bigint tenant_id FK
+        bigint code UK
+        bigint user_id FK
+        bigint seller_id FK
+        bigint cash_shift_id FK
+        bigint customer_id
+        string status
+        string price_table
+        decimal subtotal
+        decimal discount_amount
+        decimal total_amount
+        string payment_method
+        text notes
+    }
+
+    SALE_ITEMS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint sale_id FK
+        bigint product_id FK
+        decimal quantity
+        decimal unit_price
+        decimal discount_amount
+        decimal total_price
+    }
+
+    SALE_PAYMENTS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint sale_id FK
+        string payment_method
+        decimal amount
+        int installments
+        date due_date
+    }
+
+    CASH_SHIFTS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint user_id FK
+        string status
+        datetime opened_at
+        datetime closed_at
+        decimal opening_balance
+        decimal closing_balance
+        decimal difference_amount
+    }
+
+    CASH_MOVEMENTS {
+        bigint id PK
+        bigint tenant_id FK
+        bigint cash_shift_id FK
+        bigint user_id FK
+        string type
+        decimal amount
+        string reason
+    }
+
+    CUSTOMER_RECEIVABLES {
+        bigint id PK
+        bigint tenant_id FK
+        bigint customer_id FK
+        bigint sale_id FK
+        int installment_number
+        int total_installments
+        decimal amount
+        decimal paid_amount
+        date due_date
+        string status
+    }
+
+</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Entidades por módulo</h2>
+    <div class="modules">
+
+      <div class="module-card">
+        <div class="mod-name">Core</div>
+        <ul>
+          <li><span class="ent">tenants</span><span class="purpose">empresa cliente</span></li>
+          <li><span class="ent">tenant_user</span><span class="purpose">usuário ↔ empresa</span></li>
+          <li><span class="ent">tenant_modules</span><span class="purpose">módulos ativos</span></li>
+          <li><span class="ent">users</span><span class="purpose">login (base Laravel)</span></li>
+        </ul>
+      </div>
+
+      <div class="module-card">
+        <div class="mod-name">Cadastros</div>
+        <ul>
+          <li><span class="ent">employees</span><span class="purpose">colaboradores</span></li>
+          <li><span class="ent">suppliers</span><span class="purpose">fornecedores</span></li>
+        </ul>
+      </div>
+
+      <div class="module-card">
+        <div class="mod-name">Estoque</div>
+        <ul>
+          <li><span class="ent">categories</span><span class="purpose">categorias (hierárquica)</span></li>
+          <li><span class="ent">products</span><span class="purpose">produtos</span></li>
+          <li><span class="ent">stock_movements</span><span class="purpose">entradas/saídas</span></li>
+          <li><span class="ent">supplier_products</span><span class="purpose">de-para c/ fornecedor</span></li>
+        </ul>
+      </div>
+
+      <div class="module-card">
+        <div class="mod-name">Vendas</div>
+        <ul>
+          <li><span class="ent">customers</span><span class="purpose">clientes</span></li>
+          <li><span class="ent">sales</span><span class="purpose">venda / PDV</span></li>
+          <li><span class="ent">sale_items</span><span class="purpose">itens da venda</span></li>
+          <li><span class="ent">sale_payments</span><span class="purpose">pagamento fracionado</span></li>
+          <li><span class="ent">customer_receivables</span><span class="purpose">crediário</span></li>
+          <li><span class="ent">cash_shifts</span><span class="purpose">turno de caixa</span></li>
+          <li><span class="ent">cash_movements</span><span class="purpose">sangria/suprimento</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Observações do esquema</h2>
+    <div class="notes">
+      <ul>
+        <li><span class="tag">multi-tenant</span>Quase toda entidade carrega <code>tenant_id</code> — isolamento dos dados de cada empresa é feito por coluna, não por schema/banco separado.</li>
+        <li><span class="tag">FK fraca</span><code>sales.customer_id</code> é <code>unsignedBigInteger</code> sem constraint de chave estrangeira no banco (a tabela <code>customers</code> só existe numa migration posterior à de <code>sales</code>) — a relação é lógica, não garantida pelo SGBD.</li>
+        <li><span class="tag">hierarquia</span><code>categories.parent_id</code> referencia a própria tabela, permitindo subcategorias.</li>
+        <li><span class="tag">soft delete</span> Presente em <code>tenants</code>, <code>employees</code>, <code>suppliers</code>, <code>products</code> e <code>customers</code> — exclusão lógica, não física.</li>
+        <li><span class="tag">config extensa</span><code>tenants</code> concentra dezenas de colunas de configuração (impressão, ambiente fiscal SEFAZ, campos padrão de orçamento, faturamento da plataforma) acumuladas em 10 migrations incrementais — resumidas no diagrama para manter a leitura.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>Reconstruído a partir de 46 migrations · <code>Modules/*</code> (nwidart-modules) + <code>database/migrations</code></span>
+    <span>ERP-FATEC</span>
+  </footer>
+
+</div>
